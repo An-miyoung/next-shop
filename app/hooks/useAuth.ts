@@ -7,5 +7,5 @@ interface Auth {
 }
 
 export default function useAuth(): Auth {
-  return { loggedIn: true, loading: false, isAdmin: false };
+  return { loggedIn: false, loading: false, isAdmin: false };
 }

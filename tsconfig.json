@@ -22,6 +22,7 @@
       "@/*": ["./*"],
       "@app/*": ["./app/*"],
       "@hooks/*": ["./app/hooks/*"],
+      "@utils/*": ["./app/utils/*"],
       "@components/*": ["./app/components/*"]
     }
   },
