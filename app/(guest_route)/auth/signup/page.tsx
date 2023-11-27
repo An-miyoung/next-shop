@@ -39,16 +39,15 @@ export default function SignUp() {
     validationSchema,
     onSubmit: async (values, action) => {
       action.setSubmitting(true);
-      await fetch("/api/users", {
+      const res = await fetch("/api/users", {
         method: "POST",
         body: JSON.stringify(values),
-      }).then(async (res) => {
-        if (res.ok) {
-          const result = await res.json();
-          console.log(result);
-        }
-        action.setSubmitting(false);
       });
+      if (res.ok) {
+        const result = await res.json();
+        console.log(result);
+      }
+      action.setSubmitting(false);
     },
   });
 
@@ -63,6 +62,7 @@ export default function SignUp() {
         onChange={handleChange}
         onBlur={handleBlur}
         value={name}
+        autoComplete="username"
       />
       {errors.name !== undefined && touched.name && (
         <ErrorsRender errorMessage={errors.name} />
@@ -73,6 +73,7 @@ export default function SignUp() {
         crossOrigin={undefined}
         onChange={handleChange}
         value={email}
+        autoComplete="email"
       />
       {errors.email !== undefined && touched.email && (
         <ErrorsRender errorMessage={errors.email} />
@@ -84,6 +85,7 @@ export default function SignUp() {
         crossOrigin={undefined}
         onChange={handleChange}
         value={password}
+        autoComplete="off"
       />
       {errors.password !== undefined && touched.password && (
         <ErrorsRender errorMessage={errors.password} />
