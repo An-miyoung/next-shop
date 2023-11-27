@@ -37,14 +37,18 @@ export default function SignUp() {
       password: "",
     },
     validationSchema,
-    onSubmit: async (values) => {
-      const res = await fetch("/api/users", {
+    onSubmit: async (values, action) => {
+      action.setSubmitting(true);
+      await fetch("/api/users", {
         method: "POST",
         body: JSON.stringify(values),
+      }).then(async (res) => {
+        if (res.ok) {
+          const result = await res.json();
+          console.log(result);
+        }
+        action.setSubmitting(false);
       });
-      if (res.ok) {
-        console.log(res.json);
-      }
     },
   });
 
@@ -84,7 +88,12 @@ export default function SignUp() {
       {errors.password !== undefined && touched.password && (
         <ErrorsRender errorMessage={errors.password} />
       )}
-      <Button type="submit" className="w-full" color="blue">
+      <Button
+        type="submit"
+        className="w-full"
+        color="blue"
+        disabled={isSubmitting}
+      >
         가입하기
       </Button>
       <div className="flex items-center justify-between">

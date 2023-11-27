@@ -3,3 +3,12 @@ export interface MenuItems {
   icon: React.JSX.Element;
   label: string;
 }
+
+export interface NewUserRequest {
+  name: string;
+  email: string;
+  password: string;
+  role: "admin" | "user";
+  avatar?: { url: string; id: string };
+  verified: boolean;
+}
