@@ -37,8 +37,14 @@ export default function SignUp() {
       password: "",
     },
     validationSchema,
-    onSubmit: (values) => {
-      console.log(values);
+    onSubmit: async (values) => {
+      const res = await fetch("/api/users", {
+        method: "POST",
+        body: JSON.stringify(values),
+      });
+      if (res.ok) {
+        console.log(res.json);
+      }
     },
   });
 
