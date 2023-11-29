@@ -1,6 +1,5 @@
 import { compare, genSalt, hash } from "bcrypt";
 import { Schema, Document, model, models, Model } from "mongoose";
-import { boolean } from "yup";
 
 interface UserDocument extends Document {
   name: string;

@@ -8,6 +8,7 @@ import { useFormik } from "formik";
 import * as yup from "yup";
 import ErrorsRender from "@utils/ErrorsRender";
 import Link from "next/link";
+import { toast } from "react-toastify";
 
 const validationSchema = yup.object().shape({
   name: yup.string().required("이름은 필수입력항목입니다."),
@@ -44,8 +45,8 @@ export default function SignUp() {
         body: JSON.stringify(values),
       });
       if (res.ok) {
-        const result = await res.json();
-        console.log(result);
+        const { message } = (await res.json()) as { message: string };
+        toast.success(message);
       }
       action.setSubmitting(false);
     },

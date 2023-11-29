@@ -12,3 +12,8 @@ export interface NewUserRequest {
   avatar?: { url: string; id: string };
   verified: boolean;
 }
+
+export interface EmailVerifyRequest {
+  token: string;
+  userId: string;
+}
