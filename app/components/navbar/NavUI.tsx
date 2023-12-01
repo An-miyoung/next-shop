@@ -22,12 +22,12 @@ export const menuItems = [
   {
     href: "/profile",
     icon: <UserCircleIcon className="h-4 w-4" />,
-    label: "My Profile",
+    label: "나의정보",
   },
   {
     href: "/profile/orders",
     icon: <ShoppingBagIcon className="h-4 w-4" />,
-    label: "Orders",
+    label: "주문내역",
   },
 ];
 
@@ -60,14 +60,17 @@ export default function NavUI({ cartItemsCount }: Props) {
               <Spinner />
             ) : (
               <>
-                <Link className="px-4 py-1" href="/auth/signin">
-                  Sign in
+                <Link
+                  className="px-4 py-1 text-blue-gray-800 text-sm font-semibold"
+                  href="/auth/signin"
+                >
+                  로그인
                 </Link>
                 <Link
-                  className="bg-blue-500 text-white px-4 py-1 rounded"
+                  className="bg-blue-500 text-white px-4 py-1 rounded text-sm"
                   href="/auth/signup"
                 >
-                  Sign up
+                  회원가입
                 </Link>
               </>
             )}
@@ -90,6 +93,7 @@ export default function NavUI({ cartItemsCount }: Props) {
           </div>
         </div>
       </MaterialNav>
+      {/* 모바일화면 */}
       <div className="lg:hidden">
         <MobileNav
           menuItems={menuItems}

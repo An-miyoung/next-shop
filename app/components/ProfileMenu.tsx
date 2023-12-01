@@ -17,6 +17,7 @@ import { useState } from "react";
 import Link from "next/link";
 import useAuth from "@hooks/useAuth";
 import { MenuItems } from "@app/types";
+import SignOutButton from "./SignOut";
 
 interface Props {
   menuItems: MenuItems[];
@@ -78,16 +79,18 @@ export default function ProfileMenu({ menuItems, avatar }: Props) {
               className="flex items-center gap-2 rounded"
             >
               <RectangleGroupIcon className="h-4 w-4" />
-              <span>Dashboard</span>
+              <span>관리자전용</span>
             </MenuItem>
           </Link>
         ) : null}
 
         <MenuItem>
-          <p className="flex items-center gap-2 rounded">
-            <PowerIcon className="h-4 w-4" />
-            <span>Sign Out</span>
-          </p>
+          <SignOutButton>
+            <div className="flex items-center gap-2 rounded">
+              <PowerIcon className="h-4 w-4" />
+              <span>로그아웃</span>
+            </div>
+          </SignOutButton>
         </MenuItem>
       </MenuList>
     </Menu>
