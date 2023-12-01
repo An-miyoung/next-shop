@@ -3,27 +3,24 @@
 import React from "react";
 import AuthFormContainer from "@components/AuthFormContainer";
 import { Button, Input } from "@material-tailwind/react";
-import { XMarkIcon } from "@heroicons/react/24/outline";
 import { useFormik } from "formik";
 import * as yup from "yup";
 import ErrorsRender from "@utils/ErrorsRender";
 import Link from "next/link";
+import { signIn } from "next-auth/react";
 import { toast } from "react-toastify";
-import { Console } from "console";
+import { useRouter } from "next/navigation";
 
 const validationSchema = yup.object().shape({
-  name: yup.string().required("이름은 필수입력항목입니다."),
   email: yup
     .string()
     .email("이메일형식에 맞지않습니다.")
     .required("이메일은 필수입력항목입니다."),
-  password: yup
-    .string()
-    .min(7, "7글자이상 입력해주세요.")
-    .required("비밀번호는 필수입력항목입니다."),
+  password: yup.string().required("비밀번호는 필수입력항목입니다."),
 });
 
-export default function SignUp() {
+export default function SignIn() {
+  const router = useRouter();
   const {
     values,
     handleChange,
@@ -34,47 +31,46 @@ export default function SignUp() {
     touched,
   } = useFormik({
     initialValues: {
-      name: "",
       email: "",
       password: "",
     },
     validationSchema,
     onSubmit: async (values, action) => {
       action.setSubmitting(true);
-      const res = await fetch("/api/users", {
-        method: "POST",
-        body: JSON.stringify(values),
-        headers: { "Content-Type": "application/json" },
+      // fetch('api/auth/signin) 을 하지 않고,
+      // next-auth/react 가 미리 만든 함수인 signIn 을 불러온다.
+      const res = await signIn("credentials", {
+        ...values,
+        // signin 실패시 error 화면으로 가지 못하게 한다.
+        redirect: false,
       });
-      if (res.ok) {
-        const { message } = (await res.json()) as { message: string };
-        toast.success(message);
+
+      if (res?.error === "CredentialsSignin") {
+        const toastMsg = () => (
+          <div>
+            가입하지 않은 이메일이거나
+            <br />
+            비밀번호가 다릅니다.
+          </div>
+        );
+        toast.warning(toastMsg);
+      }
+
+      if (!res?.error) {
+        router.refresh();
       }
       action.setSubmitting(false);
     },
   });
 
-  const { name, email, password } = values;
+  const { email, password } = values;
   type valueKeys = keyof typeof values;
   const error = (name: valueKeys) => {
     return errors[name] && touched[name] ? true : false;
   };
 
   return (
-    <AuthFormContainer title="회원가입을 합니다." onSubmit={handleSubmit}>
-      <Input
-        name="name"
-        label="이름"
-        crossOrigin={undefined}
-        onChange={handleChange}
-        onBlur={handleBlur}
-        value={name}
-        autoComplete="username"
-        error={error("name")}
-      />
-      {errors.name !== undefined && touched.name && (
-        <ErrorsRender errorMessage={errors.name} />
-      )}
+    <AuthFormContainer title="로그인 합니다." onSubmit={handleSubmit}>
       <Input
         name="email"
         label="이메일"
@@ -108,14 +104,17 @@ export default function SignUp() {
         color="blue"
         disabled={isSubmitting}
       >
-        가입하기
+        로그인하기
       </Button>
       <div className="flex items-center justify-between">
-        <Link href="/auth/signin" className="text-sm text-blue-gray-800">
-          로그인하기
+        <Link href="/auth/signup" className="text-sm text-blue-gray-800">
+          회원가입 하기
         </Link>
-        <Link href="/" className="text-sm text-blue-gray-800">
-          쇼핑몰로 이동
+        <Link
+          href="/auth/forget-password"
+          className="text-sm text-blue-gray-800"
+        >
+          비밀번호 찾기
         </Link>
       </div>
     </AuthFormContainer>

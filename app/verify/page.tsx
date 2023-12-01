@@ -15,18 +15,13 @@ export default function Verify({ searchParams }: Props) {
   const { token, userId } = searchParams;
   const router = useRouter();
 
-  const fetchToken = async () => {
-    const verified = await fetch(`/api/users/verify`, {
-      method: "POST",
-      body: JSON.stringify({ token, userId }),
-    });
-    return verified;
-  };
-
+  // useEffect 는 aync, await 를 내부에 쓸수 없어서, fetch().then() 사용.
+  // then 내부에서는 aync, await 사용가능
   useEffect(() => {
     fetch(`/api/users/verify`, {
       method: "POST",
       body: JSON.stringify({ token, userId }),
+      headers: { "Content-Type": "application/json" },
     }).then(async (res) => {
       const result = await res.json();
       const { message, error } = result as { message: string; error: string };

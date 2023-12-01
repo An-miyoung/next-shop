@@ -1,11 +1,8 @@
 "use client";
+
 import React from "react";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-
-interface Props {
-  message: string;
-}
 
 const Notification = () => {
   return (
@@ -18,6 +15,7 @@ const Notification = () => {
       draggable
       pauseOnHover
       theme="light"
+      style={{ textAlign: "center" }}
     />
   );
 };
