@@ -2,6 +2,7 @@
 // DB 에 저장된 token과 입력값이 같은지 비교한 후
 // 같으면 EmailVerificationToken 에 저장된 token 값을 지운다.
 
+import startDb from "@/app/lib/db";
 import EmailVerificationToken from "@/app/models/emailVerificationToken";
 import UserModel from "@/app/models/userModel";
 import { EmailVerifyRequest } from "@/app/types";
@@ -16,7 +17,7 @@ export const POST = async (req: Request) => {
     if (!isValidObjectId(userId) || !token) {
       return NextResponse.json(
         {
-          error: "Invalid Request. userId 형식이 다르거나, token 이 없습니다.",
+          error: "userId 형식이 다르거나, token 이 없습니다.",
         },
         {
           status: 401,
@@ -25,6 +26,7 @@ export const POST = async (req: Request) => {
     }
 
     // user check
+    await startDb();
     const verifyToken = await EmailVerificationToken.findOne({ user: userId });
     if (!verifyToken) {
       return NextResponse.json(
@@ -65,7 +67,7 @@ export const POST = async (req: Request) => {
     console.log(error.message);
     return NextResponse.json(
       {
-        error: "Server Error, 이메일 인증실패",
+        error: "이메일 인증실패",
       },
       {
         status: 500,

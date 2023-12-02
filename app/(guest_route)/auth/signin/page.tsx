@@ -104,17 +104,17 @@ export default function SignIn() {
         color="blue"
         disabled={isSubmitting}
       >
-        로그인하기
+        로그인
       </Button>
       <div className="flex items-center justify-between">
         <Link href="/auth/signup" className="text-sm text-blue-gray-800">
-          회원가입 하기
+          회원가입
         </Link>
         <Link
           href="/auth/forget-password"
           className="text-sm text-blue-gray-800"
         >
-          비밀번호 찾기
+          비밀번호 있으셨나요?
         </Link>
       </div>
     </AuthFormContainer>

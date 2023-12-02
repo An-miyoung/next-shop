@@ -1,6 +1,6 @@
 "use client";
 import React, { useEffect } from "react";
-import PageNotFound from "@components/404";
+import { PageNotFound } from "@components/404";
 import { useRouter } from "next/navigation";
 import { toast } from "react-toastify";
 

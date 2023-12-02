@@ -12,7 +12,7 @@ export const POST = async (req: Request) => {
     if (!email || !password) {
       return NextResponse.json(
         {
-          error: "Invalid Request, 이메일 혹은 비밀번호가 비어있습니다.",
+          error: "이메일 혹은 비밀번호가 비어있습니다.",
         },
         {
           status: 404,

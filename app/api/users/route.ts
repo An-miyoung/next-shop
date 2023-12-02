@@ -25,6 +25,8 @@ export const POST = async (req: Request) => {
     token,
   });
 
+  const verificationUrl = `${process.env.EMAIL_VERIFICATION_URL}?token=${token}&userId=${newUser._id}`;
+
   const transport = nodemailer.createTransport({
     host: "sandbox.smtp.mailtrap.io",
     port: 2525,
@@ -33,8 +35,6 @@ export const POST = async (req: Request) => {
       pass: process.env.MAILTRAP_MAILTRANSPORT_AUTH_PASS,
     },
   });
-
-  const verificationUrl = `http://localhost:3000/verify?token=${token}&userId=${newUser._id}`;
 
   await transport.sendMail({
     from: "support@next-shop.com",
