@@ -11,6 +11,7 @@ export default function SignOutButton({ children }: Props) {
       onClick={async () => {
         await signOut();
       }}
+      className=" no-underline "
     >
       {children}
     </div>

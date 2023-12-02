@@ -2,7 +2,7 @@ import NextAuth, { NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import { SigninCredentials } from "@app/types";
 
-const authConfig: NextAuthOptions = {
+export const authConfig: NextAuthOptions = {
   providers: [
     CredentialsProvider({
       name: "Credentials",
@@ -24,10 +24,27 @@ const authConfig: NextAuthOptions = {
       },
     }),
   ],
+  // callback 을 정하면 return 하는 내용을 정할 수 있다.
+  // credential 이 제공하는 user 정보는 email, name 뿐이어서
+  // id, role, avatar, verified 를 전달하려면 이 부분에서 수정
+  callbacks: {
+    async jwt({ token, user }) {
+      if (user) {
+        token.user = user;
+      }
+      return token;
+    },
+    async session({ session, token }) {
+      if (token.user) {
+        session.user = { ...session.user, ...token.user };
+      }
+      return session;
+    },
+  },
 };
 
 // 인증에 필요한 auth, POST, GET 을 NextAuth 에서 빼놓는다.
 
 const handler = NextAuth(authConfig);
-export const { auth } = NextAuth(authConfig);
+
 export { handler as GET, handler as POST };
