@@ -1,12 +1,12 @@
 // db 에 들어가 새로운 비밀번호로 바꾼다
 
 import startDb from "@/app/lib/db";
+import { sendEmail } from "@/app/lib/email";
 import PasswordResetToken from "@/app/models/passwordResetToken";
 import UserModel from "@/app/models/userModel";
 import { UpdatePasswordRequest } from "@/app/types";
 import { isValidObjectId } from "mongoose";
 import { NextResponse } from "next/server";
-import nodemailer from "nodemailer";
 
 export const POST = async (req: Request) => {
   try {
@@ -78,20 +78,9 @@ export const POST = async (req: Request) => {
     user.password = password;
     await user.save();
     await PasswordResetToken.findByIdAndDelete(resetToken._id);
-
-    const transport = nodemailer.createTransport({
-      host: "sandbox.smtp.mailtrap.io",
-      port: 2525,
-      auth: {
-        user: process.env.MAILTRAP_MAILTRANSPORT_AUTH_USER,
-        pass: process.env.MAILTRAP_MAILTRANSPORT_AUTH_PASS,
-      },
-    });
-
-    await transport.sendMail({
-      from: "support@next-shop.com",
-      to: user.email,
-      html: `<h1>비밀번호가 재설정됐습니다.</h1>`,
+    await sendEmail({
+      profile: { name: user.name, email: user.email },
+      subject: "password-changed",
     });
 
     return NextResponse.json(

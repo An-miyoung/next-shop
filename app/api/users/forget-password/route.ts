@@ -5,8 +5,8 @@ import UserModel from "@/app/models/userModel";
 import { ForgetPasswordRequest } from "@/app/types";
 import { NextResponse } from "next/server";
 import crypto from "crypto";
-import nodemailer from "nodemailer";
 import startDb from "@/app/lib/db";
+import { sendEmail } from "@/app/lib/email";
 
 export const POST = async (req: Request) => {
   try {
@@ -46,20 +46,10 @@ export const POST = async (req: Request) => {
     });
 
     const resetPasswordLink = `${process.env.PASSWORD_RESET_URL}?token=${token}&userId=${user._id}`;
-
-    const transport = nodemailer.createTransport({
-      host: "sandbox.smtp.mailtrap.io",
-      port: 2525,
-      auth: {
-        user: process.env.MAILTRAP_MAILTRANSPORT_AUTH_USER,
-        pass: process.env.MAILTRAP_MAILTRANSPORT_AUTH_PASS,
-      },
-    });
-
-    await transport.sendMail({
-      from: "support@next-shop.com",
-      to: user.email,
-      html: `<h1><a href="${resetPasswordLink}">여기</a>를 클릭해서 비밀번호를 재설정 해주세요.</h1>`,
+    await sendEmail({
+      profile: { name: user.name, email: user.email },
+      subject: "forget-password",
+      linkUrl: resetPasswordLink,
     });
 
     return NextResponse.json({

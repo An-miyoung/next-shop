@@ -7,8 +7,8 @@ import { NewUserRequest } from "@app/types";
 import startDb from "@lib/db";
 import UserModel from "@models/userModel";
 import { NextResponse } from "next/server";
-import nodemailer from "nodemailer";
 import crypto from "crypto";
+import { sendEmail } from "@/app/lib/email";
 
 export const POST = async (req: Request) => {
   const body = (await req.json()) as NewUserRequest;
@@ -27,19 +27,10 @@ export const POST = async (req: Request) => {
 
   const verificationUrl = `${process.env.EMAIL_VERIFICATION_URL}?token=${token}&userId=${newUser._id}`;
 
-  const transport = nodemailer.createTransport({
-    host: "sandbox.smtp.mailtrap.io",
-    port: 2525,
-    auth: {
-      user: process.env.MAILTRAP_MAILTRANSPORT_AUTH_USER,
-      pass: process.env.MAILTRAP_MAILTRANSPORT_AUTH_PASS,
-    },
-  });
-
-  await transport.sendMail({
-    from: "support@next-shop.com",
-    to: newUser.email,
-    html: `<h1><a href="${verificationUrl}">여기</a>를 클릭해서 이메일인증을 해 주세요.</h1>`,
+  await sendEmail({
+    profile: { name: newUser.name, email: newUser.email },
+    subject: "verification",
+    linkUrl: verificationUrl,
   });
 
   return NextResponse.json({
