@@ -27,11 +27,11 @@ export default function Verify({ searchParams }: Props) {
       const { message, error } = result as { message: string; error: string };
       if (res.ok) {
         toast.success(message);
-        router.replace("/");
       }
       if (!res.ok && error) {
         toast.warning(error);
       }
+      router.replace("/");
     });
   }, [token, userId, router]);
 

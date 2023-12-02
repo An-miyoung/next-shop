@@ -1,6 +1,14 @@
 import NextAuth, { NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
-import { SigninCredentials } from "@app/types";
+import { SessionUserProfile, SigninCredentials } from "@app/types";
+
+// getServerSession 으로 받는 session.user 에 우리가 원하는 필드를 넣도록
+// next-auth 의 module 을 재선언해준다.
+declare module "next-auth" {
+  interface Session {
+    user: SessionUserProfile;
+  }
+}
 
 export const authConfig: NextAuthOptions = {
   providers: [
@@ -35,8 +43,13 @@ export const authConfig: NextAuthOptions = {
       return token;
     },
     async session({ session, token }) {
+      // jwt token 에서 user 를 가져오기 때문에 불필요한 필드가 따라온다
+      // 필요한 필드만을 지정하기 위해 타입을 알려주고 session 안에 항목별로 넣어준다.
       if (token.user) {
-        session.user = { ...session.user, ...token.user };
+        session.user = {
+          ...session.user,
+          ...token.user,
+        };
       }
       return session;
     },

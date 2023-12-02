@@ -9,7 +9,7 @@ import * as yup from "yup";
 import ErrorsRender from "@utils/ErrorsRender";
 import Link from "next/link";
 import { toast } from "react-toastify";
-import { Console } from "console";
+import { signIn } from "next-auth/react";
 
 const validationSchema = yup.object().shape({
   name: yup.string().required("이름은 필수입력항목입니다."),
@@ -46,9 +46,22 @@ export default function SignUp() {
         body: JSON.stringify(values),
         headers: { "Content-Type": "application/json" },
       });
-      if (res.ok) {
+      const { error, message } = (await res.json()) as {
+        error: string;
+        message: string;
+      };
+      if (res.ok && message) {
         const { message } = (await res.json()) as { message: string };
         toast.success(message);
+        await signIn("credentials", {
+          email,
+          password,
+          redirect: false,
+        });
+      }
+      if (!res.ok && error) {
+        toast.warning(error);
+        throw new Error(error);
       }
       action.setSubmitting(false);
     },
