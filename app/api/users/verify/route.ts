@@ -8,6 +8,8 @@ import UserModel from "@/app/models/userModel";
 import { EmailVerifyRequest } from "@/app/types";
 import { isValidObjectId } from "mongoose";
 import { NextResponse } from "next/server";
+import crypto from "crypto";
+import { sendEmail } from "@/app/lib/email";
 
 export const POST = async (req: Request) => {
   try {
@@ -72,6 +74,66 @@ export const POST = async (req: Request) => {
       {
         status: 500,
       }
+    );
+  }
+};
+
+export const GET = async (req: Request) => {
+  try {
+    const userId = req.url.split("?userId=")[1];
+
+    if (!isValidObjectId(userId))
+      return NextResponse.json(
+        {
+          error: "사용자입력 오류",
+        },
+        { status: 401 }
+      );
+
+    await startDb();
+    const user = await UserModel.findById(userId);
+    if (!user)
+      return NextResponse.json(
+        {
+          error: "존재하지 않는 사용자입니다.",
+        },
+        { status: 401 }
+      );
+    if (user.verified)
+      return NextResponse.json(
+        {
+          error: "이메일인증이 이미 완료됐습니다.",
+        },
+        { status: 401 }
+      );
+    // 기존에 있을지도 모르는 토큰을 지운다
+    await EmailVerificationToken.findOneAndDelete({ user: userId });
+    const token = crypto.randomBytes(36).toString("hex");
+    await EmailVerificationToken.create({
+      user: userId,
+      token,
+    });
+
+    const verificationUrl = `${process.env.EMAIL_VERIFICATION_URL}?token=${token}&userId=${userId}`;
+
+    await sendEmail({
+      profile: { name: user.name, email: user.email },
+      subject: "verification",
+      linkUrl: verificationUrl,
+    });
+
+    return NextResponse.json(
+      {
+        message: "이메일을 확인하세요.",
+      },
+      { status: 200 }
+    );
+  } catch (error: any) {
+    return NextResponse.json(
+      {
+        error: "이메일인증에 실패했습니다.",
+      },
+      { status: 500 }
     );
   }
 };
