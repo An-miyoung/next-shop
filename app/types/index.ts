@@ -1,3 +1,4 @@
+// user authorization
 export interface MenuItems {
   href: string;
   icon: React.JSX.Element;
@@ -41,4 +42,19 @@ export interface UpdatePasswordRequest {
   userId: string;
   token: string;
   password: string;
+}
+
+// Product
+export interface Product {
+  id: string;
+  title: string;
+  thumbnail: string;
+  description: string;
+  price: {
+    mrp: number;
+    salePrice: number;
+    saleOff: number;
+  };
+  category: string;
+  quantity: number;
 }

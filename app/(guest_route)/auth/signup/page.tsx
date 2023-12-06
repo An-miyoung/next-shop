@@ -6,7 +6,7 @@ import { Button, Input } from "@material-tailwind/react";
 import { XMarkIcon } from "@heroicons/react/24/outline";
 import { useFormik } from "formik";
 import * as yup from "yup";
-import ErrorsRender from "@utils/ErrorsRender";
+import ErrorsRender from "@components/ErrorsRender";
 import Link from "next/link";
 import { toast } from "react-toastify";
 import { signIn } from "next-auth/react";

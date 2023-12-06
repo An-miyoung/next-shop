@@ -5,7 +5,7 @@ import AuthFormContainer from "@components/AuthFormContainer";
 import { Button, Input } from "@material-tailwind/react";
 import { useFormik } from "formik";
 import * as yup from "yup";
-import ErrorsRender from "@utils/ErrorsRender";
+import ErrorsRender from "@components/ErrorsRender";
 import Link from "next/link";
 import { signIn } from "next-auth/react";
 import { toast } from "react-toastify";
