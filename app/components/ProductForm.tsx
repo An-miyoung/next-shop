@@ -16,10 +16,11 @@ import React, {
 import { PlusIcon, TrashIcon } from "@heroicons/react/24/outline";
 import categories from "@/app/utils/categories";
 import ImageSelector from "@components/ImageSelector";
+import { NewProductInfo } from "@app/types";
 
 interface Props {
   initialValue?: InitialValue;
-  onSubmit(values: any): void;
+  onSubmit(values: NewProductInfo): void;
 }
 
 export interface InitialValue {
@@ -91,15 +92,6 @@ export default function ProductForm(props: Props) {
     return isPending ? "새상품 등록중..." : "새상품 등록하기";
   };
 
-  useEffect(() => {
-    if (initialValue) {
-      setProductInfo({ ...initialValue });
-      setThumbnailSource([initialValue.thumbnail]);
-      setProductImagesSource(initialValue.images);
-      setIsForUpdate(true);
-    }
-  }, [initialValue]);
-
   // 이미지들을 바꿀때 onChange 를 그대로 이어서 써야만 target 을 바로 손댈수 있다.
   const onImagesChange: ChangeEventHandler<HTMLInputElement> = ({ target }) => {
     const files = target.files;
@@ -125,6 +117,15 @@ export default function ProductForm(props: Props) {
       setThumbnailSource([URL.createObjectURL(file)]);
     }
   };
+
+  useEffect(() => {
+    if (initialValue) {
+      setProductInfo({ ...initialValue });
+      setThumbnailSource([initialValue.thumbnail]);
+      setProductImagesSource(initialValue.images);
+      setIsForUpdate(true);
+    }
+  }, [initialValue]);
 
   return (
     <div className="p-4 max-w-3xl mx-auto">
