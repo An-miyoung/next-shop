@@ -1,12 +1,12 @@
 // 비밀번호 재설정링크를 보내준다.
 
-import PasswordResetToken from "@/app/models/passwordResetToken";
-import UserModel from "@/app/models/userModel";
-import { ForgetPasswordRequest } from "@/app/types";
+import PasswordResetToken from "@models/passwordResetToken";
+import UserModel from "@models/userModel";
+import { ForgetPasswordRequest } from "@app/types";
 import { NextResponse } from "next/server";
 import crypto from "crypto";
-import startDb from "@/app/lib/db";
-import { sendEmail } from "@/app/lib/email";
+import startDb from "@lib/db";
+import { sendEmail } from "@lib/email";
 
 export const POST = async (req: Request) => {
   try {

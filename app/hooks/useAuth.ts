@@ -1,5 +1,5 @@
 import { useSession } from "next-auth/react";
-import { SessionUserProfile } from "../types";
+import { SessionUserProfile } from "@app/types";
 
 interface Auth {
   loggedIn: boolean;

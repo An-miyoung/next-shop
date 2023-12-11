@@ -1,8 +1,8 @@
 // root 의 auth.ts 를 통해 들어온 email, password 로 DB 를 찾아 로그인을 평가하고 실행한다.
 
-import startDb from "@/app/lib/db";
-import UserModel from "@/app/models/userModel";
-import { SigninCredentials } from "@/app/types";
+import startDb from "@lib/db";
+import UserModel from "@models/userModel";
+import { SigninCredentials } from "@app/types";
 import { NextResponse } from "next/server";
 
 export const POST = async (req: Request) => {

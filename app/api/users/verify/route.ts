@@ -2,14 +2,14 @@
 // DB 에 저장된 token과 입력값이 같은지 비교한 후
 // 같으면 EmailVerificationToken 에 저장된 token 값을 지운다.
 
-import startDb from "@/app/lib/db";
-import EmailVerificationToken from "@/app/models/emailVerificationToken";
-import UserModel from "@/app/models/userModel";
-import { EmailVerifyRequest } from "@/app/types";
+import startDb from "@lib/db";
+import EmailVerificationToken from "@models/emailVerificationToken";
+import UserModel from "@models/userModel";
+import { EmailVerifyRequest } from "@app/types";
 import { isValidObjectId } from "mongoose";
 import { NextResponse } from "next/server";
 import crypto from "crypto";
-import { sendEmail } from "@/app/lib/email";
+import { sendEmail } from "@lib/email";
 
 export const POST = async (req: Request) => {
   try {

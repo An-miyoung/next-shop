@@ -1,5 +1,5 @@
 import { authConfig } from "@/auth";
-import Navbar from "../components/navbar";
+import Navbar from "@components/navbar";
 import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
 import EmailVerificationBanner from "@components/EmailVerificationBanner";

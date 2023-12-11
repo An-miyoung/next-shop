@@ -8,7 +8,7 @@ import startDb from "@lib/db";
 import UserModel from "@models/userModel";
 import { NextResponse } from "next/server";
 import crypto from "crypto";
-import { sendEmail } from "@/app/lib/email";
+import { sendEmail } from "@lib/email";
 
 export const POST = async (req: Request) => {
   const body = (await req.json()) as NewUserRequest;

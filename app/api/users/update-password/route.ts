@@ -1,10 +1,10 @@
 // db 에 들어가 새로운 비밀번호로 바꾼다
 
-import startDb from "@/app/lib/db";
-import { sendEmail } from "@/app/lib/email";
-import PasswordResetToken from "@/app/models/passwordResetToken";
-import UserModel from "@/app/models/userModel";
-import { UpdatePasswordRequest } from "@/app/types";
+import startDb from "@lib/db";
+import { sendEmail } from "@lib/email";
+import PasswordResetToken from "@models/passwordResetToken";
+import UserModel from "@models/userModel";
+import { UpdatePasswordRequest } from "@app/types";
 import { isValidObjectId } from "mongoose";
 import { NextResponse } from "next/server";
 

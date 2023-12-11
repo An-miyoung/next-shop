@@ -3,7 +3,6 @@
 import React from "react";
 import AuthFormContainer from "@components/AuthFormContainer";
 import { Button, Input } from "@material-tailwind/react";
-import { XMarkIcon } from "@heroicons/react/24/outline";
 import { useFormik } from "formik";
 import * as yup from "yup";
 import ErrorsRender from "@components/ErrorsRender";

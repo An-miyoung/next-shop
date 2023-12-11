@@ -1,25 +1,11 @@
-import { Schema, Document, models, model, Model } from "mongoose";
-import categories from "../utils/categories";
+import { Schema, models, model, Model } from "mongoose";
+import categories from "@utils/categories";
+import { NewProduct } from "@app/types";
 
-interface ProductDocument extends Document {
-  title: string;
-  description: string;
-  bulletPoints?: string[];
-  thumbnail: {
-    url: string;
-    id: string;
-  };
-  images?: {
-    url: string;
-    id: string;
-  }[];
-  price: {
-    base: number;
-    discounted: number;
-  };
-  category: string;
-  quantity: number;
-  rating?: number;
+// document 가 아니라 NewProduct 에서 확장해 만듬.
+export interface ProductDocument extends NewProduct {
+  // virtual property
+  sale: number;
 }
 
 const productSchema = new Schema<ProductDocument>(

@@ -1,7 +1,7 @@
-import { PasswordResetFailed } from "@/app/components/404";
-import UpdatePassword from "@/app/components/UpdatePassword";
-import startDb from "@/app/lib/db";
-import PasswordResetToken from "@/app/models/passwordResetToken";
+import { PasswordResetFailed } from "@components/404";
+import UpdatePassword from "@components/UpdatePassword";
+import startDb from "@lib/db";
+import PasswordResetToken from "@models/passwordResetToken";
 import React from "react";
 
 interface Props {
