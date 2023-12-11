@@ -1,19 +1,37 @@
 "use client";
 
-import ProductForm from "@/app/components/ProductForm";
-import { NewProductInfo } from "@/app/types";
+import ProductForm from "@components/ProductForm";
+import { NewProductInfo } from "@app/types";
+import { uplaodImage } from "@utils/cloudinaryUplaodHelper";
 import { newProductInfoSchema } from "@utils/validationSchema";
 import React from "react";
 import { toast } from "react-toastify";
 import { ValidationError } from "yup";
+import { createProduct } from "@app/(admin_route)/products/action";
 
 export default function Create() {
   const handlCreateProduct = async (values: NewProductInfo) => {
+    const { thumbnail, images } = values;
     try {
-      console.log("validattion start");
       // abortEarly: false 로 하면 모든 검사를 끝낸 후 마지막에 에러를 표시
-      await newProductInfoSchema.validate(values, {
-        abortEarly: false,
+      await newProductInfoSchema.validate(values, { abortEarly: false });
+
+      const thumbnailRes = await uplaodImage(thumbnail!);
+
+      let productImages: { url: string; id: string }[] = [];
+      if (images) {
+        const uploadPromise = images.map(async (imageFile) => {
+          const { url, id } = await uplaodImage(imageFile);
+          return { url, id };
+        });
+        productImages = await Promise.all(uploadPromise);
+      }
+
+      await createProduct({
+        ...values,
+        price: { base: values.mrp, discounted: values.salePrice },
+        thumbnail: thumbnailRes,
+        images: productImages,
       });
     } catch (error: any) {
       if (error instanceof ValidationError) {

@@ -1,4 +1,4 @@
-import ProductTable from "@/app/components/ProductTable";
+import ProductTable from "@components/ProductTable";
 import React from "react";
 
 export default function Products() {

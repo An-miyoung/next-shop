@@ -1,7 +1,7 @@
 import { authConfig } from "@/auth";
 import { getServerSession } from "next-auth";
 import { redirect } from "next/navigation";
-import AdminSidebar from "../components/AdminSideBar";
+import AdminSidebar from "@components/AdminSideBar";
 
 interface Props {
   children: React.ReactNode;
