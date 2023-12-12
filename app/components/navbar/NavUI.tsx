@@ -10,7 +10,7 @@ import {
 import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
 import ProfileMenu from "@components/ProfileMenu";
 import { MobileNav } from "@components/MobileNav";
-import CartIcon from "@components/CarIcon";
+import CartIcon from "@components/CartIcon";
 import { UserCircleIcon, ShoppingBagIcon } from "@heroicons/react/24/outline";
 import useAuth from "@hooks/useAuth";
 

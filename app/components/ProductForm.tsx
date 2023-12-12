@@ -17,10 +17,12 @@ import { PlusIcon, TrashIcon } from "@heroicons/react/24/outline";
 import categories from "@/app/utils/categories";
 import ImageSelector from "@components/ImageSelector";
 import { NewProductInfo } from "@app/types";
+import { removeImageFromCloud } from "../(admin_route)/products/action";
 
 interface Props {
   initialValue?: InitialValue;
   onSubmit(values: NewProductInfo): void;
+  onImageRemove?(source: string): void;
 }
 
 export interface InitialValue {
@@ -47,14 +49,15 @@ const defaultValue = {
 };
 
 export default function ProductForm(props: Props) {
-  const { onSubmit, initialValue } = props;
+  const { onSubmit, initialValue, onImageRemove } = props;
   const [isPending, startTransition] = useTransition();
-  // 상태가 변함에 따라 다시 render 하게 만드는 trigger 들
-  const [images, setImages] = useState<File[]>([]);
+  // local storade 에 저장된 이미지(현화면상에서 수정할때)
+  const [imageFiles, setImagesFiles] = useState<File[]>([]);
   const [thumbnail, setThumbnail] = useState<File>();
   const [isForUpdate, setIsForUpdate] = useState(false);
   const [productInfo, setProductInfo] = useState({ ...defaultValue });
   const [thumbnailSource, setThumbnailSource] = useState<string[]>();
+  // DB 에서 읽어온 이미지(저장된 것을 수정할때) + local stroage 이미지
   const [productImagesSource, setProductImagesSource] = useState<string[]>();
 
   const fields = productInfo.bulletPoints;
@@ -83,8 +86,29 @@ export default function ProductForm(props: Props) {
   };
 
   const removeImage = async (index: number) => {
-    const newImages = images.filter((_, idx) => idx !== index);
-    setImages([...newImages]);
+    if (!productImagesSource) return;
+
+    const imageToRemove = productImagesSource[index];
+    const cloudSourceUrl = "https://res.cloudinary.com";
+    // 삭제하고자 하는 이미지가 클라우드에 저장되어 있는 경우(상품수정시 기존이미지수정)
+    if (imageToRemove.startsWith(cloudSourceUrl)) {
+      onImageRemove && onImageRemove(imageToRemove);
+    } else {
+      // 삭제하고자 하는 이미지가 로컬스토리지에만 저장되어 있는 경우(새상품등록 혹은 상품수정시 화면상에서 고르다가 삭제)
+      const fileIndexDiff = productImagesSource.length - imageFiles.length;
+      const indexToRemove = index - fileIndexDiff;
+      // filter를 적용하면 새로운 array 가 생기고 이것으로 state를 바꾸기 위해 이런 방식을 쓴다.
+      const newImageFiles = imageFiles.filter(
+        (_, idx) => idx !== indexToRemove
+      );
+      setImagesFiles([...newImageFiles]);
+    }
+
+    // update UI
+    const newProductImagesSource = productImagesSource.filter(
+      (_, idx) => idx !== index
+    );
+    setProductImagesSource([...newProductImagesSource]);
   };
 
   const getBtnTitle = () => {
@@ -98,7 +122,7 @@ export default function ProductForm(props: Props) {
     if (files) {
       const newImages = Array.from(files).map((item) => item);
       const oldImages = productImagesSource || [];
-      setImages([...images, ...newImages]);
+      setImagesFiles([...imageFiles, ...newImages]);
       setProductImagesSource([
         ...oldImages,
         ...newImages.map((file) => URL.createObjectURL(file)),
@@ -136,7 +160,7 @@ export default function ProductForm(props: Props) {
       <form
         action={() =>
           startTransition(() => {
-            onSubmit({ ...productInfo, images, thumbnail });
+            onSubmit({ ...productInfo, images: imageFiles, thumbnail });
           })
         }
         className="space-y-6"

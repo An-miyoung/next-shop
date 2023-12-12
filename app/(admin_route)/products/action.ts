@@ -46,3 +46,32 @@ export const createProduct = async (values: NewProduct) => {
     throw new Error("새상품 등록에 실패했습니다.");
   }
 };
+
+export const removeImageFromCloud = async (publicId: string) => {
+  try {
+    await cloudinary.uploader.destroy(publicId);
+  } catch (error: any) {
+    console.log(error.message);
+    throw new Error("이미지삭제에 실패했습니다.");
+  }
+};
+
+export const removeAndUpdateProductImages = async (
+  id: string,
+  publicId: string
+) => {
+  try {
+    const { result } = await cloudinary.uploader.destroy(publicId);
+    if (result === "ok") {
+      await startDb();
+      await ProductModel.findByIdAndUpdate(id, {
+        $pull: {
+          images: { id: publicId },
+        },
+      });
+    }
+  } catch (error: any) {
+    console.log(error.message);
+    throw new Error("이미지삭제에 실패했습니다.");
+  }
+};
