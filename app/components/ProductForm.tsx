@@ -129,12 +129,14 @@ export default function ProductForm(props: Props) {
 
   return (
     <div className="p-4 max-w-3xl mx-auto">
-      <h1 className="mb-2 text-xl">Add new product</h1>
+      <h1 className="mb-2 text-xl text-blue-900">
+        {initialValue ? "상품정보 수정하기" : "새상품 등록하기"}
+      </h1>
 
       <form
         action={() =>
-          startTransition(async () => {
-            await onSubmit({ ...productInfo, images, thumbnail });
+          startTransition(() => {
+            onSubmit({ ...productInfo, images, thumbnail });
           })
         }
         className="space-y-6"

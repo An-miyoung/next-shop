@@ -50,6 +50,7 @@ export interface Product {
   title: string;
   thumbnail: string;
   description: string;
+  bulletPoints?: string[];
   price: {
     mrp: number;
     salePrice: number;
@@ -90,4 +91,25 @@ export interface NewProduct {
   quantity: number;
   category: string;
   rating?: number;
+}
+
+export interface ProductResponse {
+  id: string;
+  title: string;
+  bulletPoints?: string[];
+  thumbnail: {
+    url: string;
+    id: string;
+  };
+  images?: {
+    url: string;
+    id: string;
+  }[];
+  description: string;
+  price: {
+    base: number;
+    discounted: number;
+  };
+  category: string;
+  quantity: number;
 }

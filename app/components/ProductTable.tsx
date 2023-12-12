@@ -140,14 +140,22 @@ export default function ProductTable(props: Props) {
                   </td>
                   <td className={classes}>
                     <div className="w-max">
-                      <Typography variant="small" color="blue-gray">
+                      <Typography
+                        variant="small"
+                        color="blue-gray"
+                        className="font-normal"
+                      >
                         {quantity}
                       </Typography>
                     </div>
                   </td>
                   <td className={classes}>
                     <div className="w-max">
-                      <Typography variant="small" color="blue-gray">
+                      <Typography
+                        variant="small"
+                        color="blue-gray"
+                        className="font-normal"
+                      >
                         {category}
                       </Typography>
                     </div>
@@ -172,6 +180,7 @@ export default function ProductTable(props: Props) {
               disabled={currentPageNo === 1}
               onClick={handleOnPrevPress}
               variant="text"
+              color="blue"
             >
               이전
             </Button>
@@ -179,6 +188,7 @@ export default function ProductTable(props: Props) {
               disabled={!hasMore}
               onClick={handleOnNextPress}
               variant="text"
+              color="blue"
             >
               다음
             </Button>

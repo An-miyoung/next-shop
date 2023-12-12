@@ -14,6 +14,8 @@ const SelectedImageThumb = ({ src }: Props) => {
         alt="product"
         fill
         className="object-fill rounded bg-blue-gray-200"
+        sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+        priority={false}
       />
     </div>
   );

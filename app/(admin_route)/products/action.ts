@@ -1,6 +1,7 @@
-// 클라이언트 컴포넌트 내에서 Server Actions을 사용하는 경우(여기 있는 파일을 부르는 page.tsx),
+// 클라이언트 컴포넌트 내에서 Server Actions을 사용하는 경우
+// (page.tsx -> ProductForm.tsx 의 form tag 내부에서 action={} 라고 부르면, action.ts 가 필요)
 // 파일 상단에 "use server" 지시사항이 있는 별도의 파일에 action을 작성합니다.
-// 이미지파일을 외부 클라우드 "cloudinary" 에 저장
+// 여기에서 action 이 하는 일은, 이미지파일을 외부 클라우드 "cloudinary" 에 저장
 // cloudinary 가 제공하는 upload 함수는 react 나 nextjs 에서 사용하지 못함. 따로 api에 전달해주는 함수가 필요
 
 "use server";
