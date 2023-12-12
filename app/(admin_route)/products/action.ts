@@ -8,7 +8,7 @@
 
 import startDb from "@lib/db";
 import ProductModel from "@models/ProductModel";
-import { NewProduct } from "@app/types";
+import { NewProduct, ProductToUpdate } from "@app/types";
 import { v2 as cloudinary } from "cloudinary";
 
 cloudinary.config({
@@ -44,6 +44,30 @@ export const createProduct = async (values: NewProduct) => {
   } catch (error: any) {
     console.log(error.message);
     throw new Error("새상품 등록에 실패했습니다.");
+  }
+};
+
+export const updateProduct = async (
+  id: string,
+  productInfo: ProductToUpdate
+) => {
+  try {
+    await startDb();
+    // productInfo 내부의 images 를 다른 이름으로 보관하고 삭제해서 push operator 를 사용할때 충돌이 나지 않게 한다
+    const updateImages = productInfo.images && [...productInfo.images];
+    // delete 로 그냥 지울수 있다!!!!!!!
+    delete productInfo.images;
+
+    await ProductModel.findByIdAndUpdate(id, {
+      ...productInfo,
+      $push: {
+        // {images: productInfo.images} 를 사용하면 충돌하면서 오류가 남
+        images: updateImages,
+      },
+    });
+  } catch (error: any) {
+    console.log(error.message);
+    throw new Error("상품수정에 실패했습니다.");
   }
 };
 

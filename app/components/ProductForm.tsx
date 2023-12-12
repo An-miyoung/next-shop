@@ -14,10 +14,9 @@ import React, {
   ChangeEventHandler,
 } from "react";
 import { PlusIcon, TrashIcon } from "@heroicons/react/24/outline";
-import categories from "@/app/utils/categories";
+import categories from "@utils/categories";
 import ImageSelector from "@components/ImageSelector";
 import { NewProductInfo } from "@app/types";
-import { removeImageFromCloud } from "../(admin_route)/products/action";
 
 interface Props {
   initialValue?: InitialValue;

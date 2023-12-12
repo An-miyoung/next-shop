@@ -113,3 +113,17 @@ export interface ProductResponse {
   category: string;
   quantity: number;
 }
+
+export interface ProductToUpdate {
+  title: string;
+  description: string;
+  bulletPoints: string[] | undefined;
+  price: {
+    base: number;
+    discounted: number;
+  };
+  category: string;
+  quantity: number;
+  thumbnail?: { url: string; id: string };
+  images?: { url: string; id: string }[];
+}

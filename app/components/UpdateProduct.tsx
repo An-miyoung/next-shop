@@ -1,9 +1,17 @@
-"use clent";
+"use client";
 
 import React from "react";
 import ProductForm, { InitialValue } from "@components/ProductForm";
-import { NewProductInfo, ProductResponse } from "@app/types";
-import { removeAndUpdateProductImages } from "../(admin_route)/products/action";
+import { NewProductInfo, ProductResponse, ProductToUpdate } from "@app/types";
+import {
+  removeAndUpdateProductImages,
+  removeImageFromCloud,
+  updateProduct,
+} from "@app/(admin_route)/products/action";
+import { updateProductInfoSchema } from "@utils/validationSchema";
+import { uplaodImage } from "@utils/cloudinaryUplaodHelper";
+import { ValidationError } from "yup";
+import { toast } from "react-toastify";
 
 interface Props {
   product: ProductResponse;
@@ -20,17 +28,51 @@ export default function UpdateProduct({ product }: Props) {
   };
 
   const handlCreateProduct = async (values: NewProductInfo) => {
-    "use server";
     const { thumbnail, images } = values;
     try {
-      console.log(values);
+      // abortEarly: false 로 하면 모든 검사를 끝낸 후 마지막에 에러를 표시
+      await updateProductInfoSchema.validate(values, { abortEarly: false });
+
+      //  type 을 {[key:string]:any} 라고 한 후 나중에 정확한 type을 만들어서 재정의할 수 있다.
+      const dataToUpdate: ProductToUpdate = {
+        title: values.title,
+        description: values.description,
+        bulletPoints: values.bulletPoints,
+        price: {
+          base: values.mrp,
+          discounted: values.salePrice,
+        },
+        category: values.category,
+        quantity: values.quantity,
+      };
+      // thumbnail 을 수정하는 경우
+      if (thumbnail) {
+        await removeImageFromCloud(product.thumbnail.id);
+        const { id, url } = await uplaodImage(thumbnail!);
+        dataToUpdate.thumbnail = { id, url };
+      }
+
+      if (images && images.length !== 0) {
+        const uploadPromise = images?.map(async (imageFile) => {
+          return await uplaodImage(imageFile);
+        });
+        dataToUpdate.images = await Promise.all(uploadPromise);
+      }
+
+      // update DB
+      await updateProduct(product.id, dataToUpdate);
     } catch (error: any) {
+      if (error instanceof ValidationError) {
+        error.inner.map((err) => {
+          toast.warning(err.message);
+        });
+      }
+
       console.log(error.message);
     }
   };
 
   const handleImageRemove = async (source: string) => {
-    "use server";
     const splitSource = source.split("/");
     const publicId = splitSource[splitSource.length - 1].split(".")[0];
     await removeAndUpdateProductImages(product.id, publicId);
