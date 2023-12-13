@@ -33,14 +33,19 @@ const fetchOneProduct = async (productId: string) => {
 export default async function ProductPage({ params }: Props) {
   const { product } = params;
   const productId = product[1];
-
   const productInfo = JSON.parse(await fetchOneProduct(productId));
+
+  let productImages = [productInfo.thumbnail];
+  if (productInfo.images) {
+    productImages = productImages.concat(productInfo.images);
+  }
+
   return (
     <div className="p-4">
       <ProductView
         title={productInfo.title}
         description={productInfo.description}
-        images={productInfo.images}
+        images={productImages}
         points={productInfo.bulletPoints}
         price={productInfo.price}
         sale={productInfo.sale}
