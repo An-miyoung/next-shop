@@ -44,7 +44,7 @@ export default function ProductCard({ product }: Props) {
             priority
           />
           <div className="absolute right-0 p-2">
-            <Chip color="red" value={`${product.sale}% off`} />
+            <Chip color="red" value={`${product.sale}% 할인`} />
           </div>
         </CardHeader>
         <CardBody>
