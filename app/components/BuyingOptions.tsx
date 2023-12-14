@@ -57,7 +57,7 @@ export default function BuyingOptions() {
       >
         장바구니
       </Button>
-      <Button color="amber" className="rounded-full">
+      <Button color="amber" disabled={isPending} className="rounded-full">
         구매하기
       </Button>
     </div>

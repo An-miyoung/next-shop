@@ -97,6 +97,7 @@ export default function ProductCard({ product }: Props) {
           ripple={false}
           fullWidth={true}
           className="bg-blue-gray-900/10 text-blue-gray-900 shadow-none hover:shadow-none hover:scale-105 focus:shadow-none focus:scale-105 active:scale-100"
+          disabled={isPending}
           onClick={() => startTransition(async () => await addToCart())}
         >
           장바구니에 넣기
@@ -105,6 +106,7 @@ export default function ProductCard({ product }: Props) {
           ripple={false}
           fullWidth={true}
           className="bg-blue-400 text-white shadow-none hover:shadow-none hover:scale-105 focus:shadow-none focus:scale-105 active:scale-100"
+          disabled={isPending}
         >
           바로 구매하기
         </Button>
