@@ -22,7 +22,6 @@ export const POST = async (req: Request) => {
 
     await startDb();
     const user = await UserModel.findOne({ email });
-    console.log(user);
     if (!user) {
       return NextResponse.json(
         {

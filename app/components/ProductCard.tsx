@@ -10,7 +10,11 @@ import {
 } from "@material-tailwind/react";
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import truncate from "truncate";
+import useAuth from "../hooks/useAuth";
+import { toast } from "react-toastify";
+import { useTransition } from "react";
 
 interface Props {
   product: {
@@ -28,6 +32,23 @@ interface Props {
 }
 
 export default function ProductCard({ product }: Props) {
+  const [isPending, startTransition] = useTransition();
+  const router = useRouter();
+  const { loggedIn } = useAuth();
+
+  const addToCart = async () => {
+    if (!product.id) return;
+    if (!loggedIn) return router.push("/auth/signin");
+
+    const res = await fetch("/api/product/cart", {
+      method: "POST",
+      body: JSON.stringify({ productId: product.id, quantity: 1 }),
+    });
+
+    const { error } = await res.json();
+    if (!res.ok && error) toast.warning(error.message);
+  };
+
   return (
     <Card className="w-full">
       <Link className="w-full" href={`/${product.title}/${product.id}`}>
@@ -76,6 +97,7 @@ export default function ProductCard({ product }: Props) {
           ripple={false}
           fullWidth={true}
           className="bg-blue-gray-900/10 text-blue-gray-900 shadow-none hover:shadow-none hover:scale-105 focus:shadow-none focus:scale-105 active:scale-100"
+          onClick={() => startTransition(async () => await addToCart())}
         >
           장바구니에 넣기
         </Button>
