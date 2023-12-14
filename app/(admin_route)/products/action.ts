@@ -7,7 +7,7 @@
 "use server";
 
 import startDb from "@lib/db";
-import ProductModel from "@models/ProductModel";
+import ProductModel from "@models/productModel";
 import { NewProduct, ProductToUpdate } from "@app/types";
 import { v2 as cloudinary } from "cloudinary";
 

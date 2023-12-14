@@ -1,8 +1,8 @@
 import React from "react";
-import startDb from "../lib/db";
-import ProductModel from "../models/ProductModel";
-import GridView from "../components/GridView";
-import ProductCard from "../components/ProductCard";
+import startDb from "@lib/db";
+import ProductModel from "@models/productModel";
+import GridView from "@components/GridView";
+import ProductCard from "@components/ProductCard";
 
 interface FetchedProduct {
   id: string;

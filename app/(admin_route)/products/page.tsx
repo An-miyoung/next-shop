@@ -1,7 +1,7 @@
 import startDb from "@lib/db";
 import ProductTable from "@components/ProductTable";
 import React from "react";
-import ProductModel from "@models/ProductModel";
+import ProductModel from "@models/productModel";
 import { Product } from "@app/types";
 import { redirect } from "next/navigation";
 

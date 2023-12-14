@@ -1,6 +1,6 @@
 import ProductView from "@/app/components/ProductView";
 import startDb from "@/app/lib/db";
-import ProductModel from "@/app/models/ProductModel";
+import ProductModel from "@models/productModel";
 import { isValidObjectId } from "mongoose";
 import { redirect } from "next/navigation";
 import React from "react";

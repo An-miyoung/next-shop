@@ -1,4 +1,4 @@
-import ProductModel from "@models/ProductModel";
+import ProductModel from "@models/productModel";
 import startDb from "@lib/db";
 import React from "react";
 import { isValidObjectId } from "mongoose";
