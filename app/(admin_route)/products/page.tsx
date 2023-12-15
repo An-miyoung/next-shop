@@ -17,12 +17,12 @@ const fetchProducts = async (
 ): Promise<Product[]> => {
   const skipCount = (pageNo - 1) * perPage;
   await startDb();
-  const res = await ProductModel.find()
-    .sort("-createdAt")
+  const products = await ProductModel.find()
+    // .sort({ createdAt: -1 })
     .skip(skipCount)
     .limit(perPage);
 
-  const products = res.map((product) => {
+  return products.map((product) => {
     return {
       id: product._id.toString(),
       title: product.title,
@@ -37,8 +37,6 @@ const fetchProducts = async (
       quantity: product.quantity,
     };
   });
-
-  return products;
 };
 
 export default async function Products({ searchParams }: Props) {
@@ -52,6 +50,7 @@ export default async function Products({ searchParams }: Props) {
   // 매 페이지마다 10개의 상품을 fetch 해 오는데, 10개보다 적은 상품이 있는 경우 마지막이리고 인지
   if (products.length < PRODUCT_PER_PAGE) hasMore = false;
   else hasMore = true;
+
   return (
     <ProductTable
       products={products}
