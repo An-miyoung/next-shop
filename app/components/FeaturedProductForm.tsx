@@ -3,7 +3,6 @@
 import { Button, Input } from "@material-tailwind/react";
 import * as Yup from "yup";
 import Image from "next/image";
-import { useRouter } from "next/navigation";
 import React, {
   ChangeEventHandler,
   useEffect,
@@ -16,7 +15,14 @@ import {
 } from "@utils/featuredValidationSchema";
 import { toast } from "react-toastify";
 import { uplaodImage } from "@utils/cloudinaryUplaodHelper";
-import { createFeaturedProduct } from "@app/(admin_route)/products/featured/action";
+import {
+  createFeaturedProduct,
+  updateFeaturedProduct,
+} from "@app/(admin_route)/products/featured/action";
+import { UpdateFeaturedProduct } from "../types";
+import { useRouter } from "next/navigation";
+import { removeImageFromCloud } from "../(admin_route)/products/action";
+import { extractPublicId } from "../utils/extractPublicIdHelper";
 
 export interface FeaturedProduct {
   file?: File;
@@ -36,6 +42,7 @@ const defaultProduct = {
 };
 
 export default function FeaturedProductForm({ initialValue }: Props) {
+  const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const [isForUpdate, setIsForUpdate] = useState(false);
   const [featuredProduct, setFeaturedProduct] =
@@ -53,10 +60,28 @@ export default function FeaturedProductForm({ initialValue }: Props) {
 
   const handleUpdate = async () => {
     try {
-      await oldFeaturedProductValidationSchema.validate(
-        { ...featuredProduct },
-        { abortEarly: false }
-      );
+      const { file, title, link, linkTitle } =
+        await oldFeaturedProductValidationSchema.validate(
+          { ...featuredProduct },
+          { abortEarly: false }
+        );
+
+      const newInfo: UpdateFeaturedProduct = { title, link, linkTitle };
+      if (file) {
+        const publicId = extractPublicId(initialValue.banner);
+        await removeImageFromCloud(publicId);
+        newInfo.banner = await uplaodImage(file);
+      }
+
+      await updateFeaturedProduct(initialValue!.id, newInfo);
+      setFeaturedProduct({
+        file: null || undefined,
+        title: "",
+        link: "",
+        linkTitle: "",
+      });
+      router.refresh();
+      router.push("/products/featured/add");
     } catch (error: any) {
       if (error instanceof Yup.ValidationError) {
         error.inner.map((err) => {
@@ -76,6 +101,13 @@ export default function FeaturedProductForm({ initialValue }: Props) {
 
       const banner = await uplaodImage(file);
       await createFeaturedProduct({ banner, title, link, linkTitle });
+      setFeaturedProduct({
+        file: null || undefined,
+        title: "",
+        link: "",
+        linkTitle: "",
+      });
+      router.refresh();
     } catch (error: any) {
       if (error instanceof Yup.ValidationError) {
         error.inner.map((err) => {

@@ -12,6 +12,7 @@ import { updateProductInfoSchema } from "@utils/validationSchema";
 import { uplaodImage } from "@utils/cloudinaryUplaodHelper";
 import { ValidationError } from "yup";
 import { toast } from "react-toastify";
+import { extractPublicId } from "../utils/extractPublicIdHelper";
 
 interface Props {
   product: ProductResponse;
@@ -67,14 +68,12 @@ export default function UpdateProduct({ product }: Props) {
           toast.warning(err.message);
         });
       }
-
       console.log(error.message);
     }
   };
 
   const handleImageRemove = async (source: string) => {
-    const splitSource = source.split("/");
-    const publicId = splitSource[splitSource.length - 1].split(".")[0];
+    const publicId = extractPublicId(source);
     await removeAndUpdateProductImages(product.id, publicId);
   };
 

@@ -139,3 +139,10 @@ export interface NewFeaturedProduct {
   link: string;
   linkTitle: string;
 }
+
+export interface UpdateFeaturedProduct {
+  banner?: { url: string; id: string };
+  title: string;
+  link: string;
+  linkTitle: string;
+}
