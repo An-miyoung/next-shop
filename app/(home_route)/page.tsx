@@ -40,10 +40,12 @@ export default async function Home() {
   const products: FetchedProduct[] = JSON.parse(await fetchLatestProducts());
 
   return (
-    <GridView>
-      {products.map((product) => (
-        <ProductCard key={product.id} product={product} />
-      ))}
-    </GridView>
+    <div>
+      <GridView>
+        {products.map((product) => (
+          <ProductCard key={product.id} product={product} />
+        ))}
+      </GridView>
+    </div>
   );
 }
