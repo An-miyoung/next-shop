@@ -12,49 +12,26 @@ import {
 import {
   Square3Stack3DIcon,
   ChevronDownIcon,
-  Cog6ToothIcon,
-  InboxArrowDownIcon,
-  LifebuoyIcon,
-  PowerIcon,
   RocketLaunchIcon,
-  Bars2Icon,
 } from "@heroicons/react/24/solid";
 import Link from "next/link";
+import categories from "@utils/categories";
 
-const navListMenuItems = [
-  {
-    title: "@material-tailwind/html",
-    description:
-      "Learn how to use @material-tailwind/html, packed with rich components and widgets.",
+const navListItems = categories.map((category) => {
+  return {
+    category,
     href: "",
-  },
-  {
-    title: "@material-tailwind/react",
-    description:
-      "Learn how to use @material-tailwind/react, packed with rich components for React.",
-
-    href: "",
-  },
-  {
-    title: "Material Tailwind PRO",
-    description:
-      "A complete set of UI Elements for building faster websites in less time.",
-
-    href: "",
-  },
-];
+  };
+});
 
 const NavListMenu = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
-  const renderItems = navListMenuItems.map(({ title, description, href }) => (
-    <Link href={href} key={title}>
+  const renderItems = navListItems.map(({ category, href }) => (
+    <Link href={href} key={category}>
       <MenuItem>
         <Typography variant="h6" color="blue-gray" className="mb-1">
-          {title}
-        </Typography>
-        <Typography variant="small" color="gray" className="font-normal">
-          {description}
+          {category}
         </Typography>
       </MenuItem>
     </Link>
@@ -78,14 +55,6 @@ const NavListMenu = () => {
           </Typography>
         </MenuHandler>
         <MenuList className="w-[36rem] grid-cols-7 gap-3 overflow-visible grid">
-          <Card
-            color="blue"
-            shadow={false}
-            variant="gradient"
-            className="col-span-3 grid h-full w-full place-items-center rounded-md"
-          >
-            <RocketLaunchIcon strokeWidth={1} className="h-28 w-28" />
-          </Card>
           <ul className="col-span-4 flex w-full flex-col gap-1">
             {renderItems}
           </ul>
