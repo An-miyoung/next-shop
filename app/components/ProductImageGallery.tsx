@@ -54,7 +54,7 @@ export default function ProductImageGallery(props: Props) {
               alt="testing"
               width={500}
               height={500}
-              priority
+              priority={false}
               style={{ width: "auto", height: "auto" }}
             />
           );
@@ -71,6 +71,8 @@ export default function ProductImageGallery(props: Props) {
               alt="testing"
               width={80}
               height={80}
+              priority={false}
+              style={{ width: "auto", height: "auto" }}
             />
           );
         })}

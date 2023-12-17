@@ -76,9 +76,7 @@ export default function FeaturedProductForm({ initialValue }: Props) {
       await updateFeaturedProduct(initialValue!.id, newInfo);
       setFeaturedProduct({
         file: null || undefined,
-        title: "",
-        link: "",
-        linkTitle: "",
+        ...defaultProduct,
       });
       router.refresh();
       router.push("/products/featured/add");
@@ -103,9 +101,7 @@ export default function FeaturedProductForm({ initialValue }: Props) {
       await createFeaturedProduct({ banner, title, link, linkTitle });
       setFeaturedProduct({
         file: null || undefined,
-        title: "",
-        link: "",
-        linkTitle: "",
+        ...defaultProduct,
       });
       router.refresh();
     } catch (error: any) {

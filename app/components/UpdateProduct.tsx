@@ -13,12 +13,14 @@ import { uplaodImage } from "@utils/cloudinaryUplaodHelper";
 import { ValidationError } from "yup";
 import { toast } from "react-toastify";
 import { extractPublicId } from "../utils/extractPublicIdHelper";
+import { useRouter } from "next/navigation";
 
 interface Props {
   product: ProductResponse;
 }
 
 export default function UpdateProduct({ product }: Props) {
+  const router = useRouter();
   const initialValue: InitialValue = {
     ...product,
     bulletPoints: product.bulletPoints || [],
@@ -62,6 +64,9 @@ export default function UpdateProduct({ product }: Props) {
 
       // update DB
       await updateProduct(product.id, dataToUpdate);
+
+      router.refresh();
+      router.push("/products");
     } catch (error: any) {
       if (error instanceof ValidationError) {
         error.inner.map((err) => {

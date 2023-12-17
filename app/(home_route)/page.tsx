@@ -3,6 +3,8 @@ import startDb from "@lib/db";
 import ProductModel from "@models/productModel";
 import GridView from "@components/GridView";
 import ProductCard from "@components/ProductCard";
+import FeaturedProductsSlider from "@components/FeaturedProductSlider";
+import FeaturedProductModel from "@models/featuredProductModel";
 
 interface FetchedProduct {
   id: string;
@@ -13,6 +15,25 @@ interface FetchedProduct {
   price: { base: number; discounted: number };
   sale: number;
 }
+
+const fetchFeaturedProduct = async () => {
+  try {
+    await startDb();
+    const products = await FeaturedProductModel.find().sort({ createdAt: -1 });
+    const finalProducts = products.map((product) => ({
+      id: product._id.toString(),
+      title: product.title,
+      banner: product.banner.url,
+      link: product.link,
+      linkTitle: product.linkTitle,
+    }));
+
+    return JSON.stringify(finalProducts);
+  } catch (error: any) {
+    console.log(error.message);
+    throw new Error(`상품목록을 읽어오는데 실패했습니다. ${error.message}`);
+  }
+};
 
 const fetchLatestProducts = async () => {
   try {
@@ -37,10 +58,12 @@ const fetchLatestProducts = async () => {
 };
 
 export default async function Home() {
+  const featuredProducts = JSON.parse(await fetchFeaturedProduct());
   const products: FetchedProduct[] = JSON.parse(await fetchLatestProducts());
 
   return (
-    <div>
+    <div className="py-4 space-y-4">
+      <FeaturedProductsSlider products={featuredProducts} />
       <GridView>
         {products.map((product) => (
           <ProductCard key={product.id} product={product} />
