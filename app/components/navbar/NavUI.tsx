@@ -13,7 +13,6 @@ import { MobileNav } from "@components/MobileNav";
 import CartIcon from "@components/CartIcon";
 import { UserCircleIcon, ShoppingBagIcon } from "@heroicons/react/24/outline";
 import useAuth from "@hooks/useAuth";
-import StickySearch from "../StickySearchBar";
 
 interface Props {
   cartItemsCount: number;
@@ -44,7 +43,7 @@ export default function NavUI({ cartItemsCount }: Props) {
 
   return (
     <>
-      <MaterialNav className="sticky top-0 z-10 mx-auto max-w-screen-xl px-4 py-2">
+      <MaterialNav className="mx-auto max-w-screen-xl px-4 py-2">
         <div className="flex items-center justify-between text-blue-gray-900">
           <Link
             href="/"
@@ -93,7 +92,6 @@ export default function NavUI({ cartItemsCount }: Props) {
             </IconButton>
           </div>
         </div>
-        <StickySearch />
       </MaterialNav>
       {/* 모바일화면 */}
       <div className="lg:hidden">

@@ -39,7 +39,8 @@ function RightArrow() {
 
 export default function HorizontalMenu() {
   return (
-    <div>
+    <div className="hidden md:block">
+      <p className=" text-xs text-blue-gray-500 pl-10">카테고리로 찾기 : </p>
       <ScrollMenu LeftArrow={LeftArrow} RightArrow={RightArrow}>
         {categories.map((c) => (
           <Link key={c} href={`/browse-products/${c}`}>

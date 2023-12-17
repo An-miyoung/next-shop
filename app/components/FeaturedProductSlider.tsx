@@ -46,7 +46,13 @@ export default function FeaturedProductsSlider({ products }: Props) {
                 className="w-full lg:h-[380px] md:h-[300px] h-[200px]"
                 style={{ position: "relative" }}
               >
-                <Image fill src={banner} alt={title} priority />
+                <Image
+                  fill
+                  src={banner}
+                  alt={title}
+                  priority
+                  sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                />
               </div>
               <div className="absolute inset-0 p-5">
                 <div className="w-full md:w-1/2 h-full flex flex-col items-start justify-center">

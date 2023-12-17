@@ -5,6 +5,8 @@ import GridView from "@components/GridView";
 import ProductCard from "@components/ProductCard";
 import FeaturedProductsSlider from "@components/FeaturedProductSlider";
 import FeaturedProductModel from "@models/featuredProductModel";
+import HorizontalMenu from "@components/HorizontalMenu";
+import StickySearch from "../components/StickySearchBar";
 
 interface FetchedProduct {
   id: string;
@@ -62,13 +64,17 @@ export default async function Home() {
   const products: FetchedProduct[] = JSON.parse(await fetchLatestProducts());
 
   return (
-    <div className="py-4 space-y-4">
-      <FeaturedProductsSlider products={featuredProducts} />
-      <GridView>
-        {products.map((product) => (
-          <ProductCard key={product.id} product={product} />
-        ))}
-      </GridView>
-    </div>
+    <>
+      <StickySearch />
+      <div className="py-4 space-y-4">
+        <HorizontalMenu />
+        <FeaturedProductsSlider products={featuredProducts} />
+        <GridView>
+          {products.map((product) => (
+            <ProductCard key={product.id} product={product} />
+          ))}
+        </GridView>
+      </div>
+    </>
   );
 }

@@ -8,27 +8,24 @@ import {
   MenuHandler,
   MenuList,
   Card,
+  Navbar,
 } from "@material-tailwind/react";
-import {
-  Square3Stack3DIcon,
-  ChevronDownIcon,
-  RocketLaunchIcon,
-} from "@heroicons/react/24/solid";
+import { Square3Stack3DIcon, ChevronDownIcon } from "@heroicons/react/24/solid";
 import Link from "next/link";
 import categories from "@utils/categories";
 
+// 굳이 밖으로 빼서 만든 이유는 renderItems 형식이 [{},{}] 이기 때문
 const navListItems = categories.map((category) => {
   return {
     category,
-    href: "",
   };
 });
 
 const NavListMenu = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
-  const renderItems = navListItems.map(({ category, href }) => (
-    <Link href={href} key={category}>
+  const renderItems = navListItems.map(({ category }) => (
+    <Link href={`/browse-products/${category}`} key={category} scroll={false}>
       <MenuItem>
         <Typography variant="h6" color="blue-gray" className="mb-1">
           {category}
@@ -66,7 +63,7 @@ const NavListMenu = () => {
 
 function NavList() {
   return (
-    <ul className="mt-2 mb-4 flex flex-col gap-2 lg:mb-0 lg:mt-0 lg:flex-row lg:items-center">
+    <ul className="mt-2 flex flex-col">
       <NavListMenu />
     </ul>
   );
@@ -74,19 +71,11 @@ function NavList() {
 
 export default function StickySearch() {
   return (
-    <div className="flex items-center justify-start text-blue-gray-900">
-      <div className="md:flex items-center gap-4 ">
-        <Typography
-          as="a"
-          href="#"
-          className="mr-4 cursor-pointer py-1.5 font-medium"
-        >
-          검색...
-        </Typography>
-        <div className="mr-4 block">
-          <NavList />
-        </div>
+    <Navbar className="sticky top-0 z-10 mx-auto md:hidden">
+      <div className="flex-row items-center justify-start text-blue-gray-900">
+        <p>검색...</p>
+        <NavList />
       </div>
-    </div>
+    </Navbar>
   );
 }
