@@ -47,6 +47,8 @@ export default function ProductCard({ product }: Props) {
 
     const { error } = await res.json();
     if (!res.ok && error) toast.warning(error.message);
+
+    router.refresh();
   };
 
   return (

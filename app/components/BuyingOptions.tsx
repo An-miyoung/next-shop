@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useTransition } from "react";
+import React, { useEffect, useState, useTransition } from "react";
 import { Button } from "@material-tailwind/react";
 import CartCountUpdater from "@components/CartCountUpdater";
 import { useParams, useRouter } from "next/navigation";
@@ -38,6 +38,8 @@ export default function BuyingOptions() {
 
     const { error } = await res.json();
     if (!res.ok && error) toast.warning(error.message);
+
+    router.refresh();
   };
 
   return (

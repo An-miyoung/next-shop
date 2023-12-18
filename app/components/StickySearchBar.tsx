@@ -7,7 +7,6 @@ import {
   Menu,
   MenuHandler,
   MenuList,
-  Card,
   Navbar,
 } from "@material-tailwind/react";
 import { Square3Stack3DIcon, ChevronDownIcon } from "@heroicons/react/24/solid";
@@ -39,7 +38,7 @@ const NavListMenu = () => {
       <Menu allowHover open={isMenuOpen} handler={setIsMenuOpen}>
         <MenuHandler>
           <Typography as="a" href="#" variant="small" className="font-normal">
-            <MenuItem className=" items-center gap-2 font-medium text-blue-gray-900 flex rounded-full">
+            <MenuItem className=" items-center font-medium gap-2 text-blue-gray-900 flex rounded-full">
               <Square3Stack3DIcon className="h-[18px] w-[18px] text-blue-gray-500" />{" "}
               카테고리로 찾기{" "}
               <ChevronDownIcon
