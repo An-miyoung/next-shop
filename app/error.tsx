@@ -16,7 +16,7 @@ export default function Error({
     console.error(error);
   }, [error]);
   return (
-    <div>
+    <div className="p-4">
       <h2>사용자의 입력을 처리하는 데 문제가 발생했습니다.</h2>
       <button
         onClick={() => {

@@ -5,6 +5,7 @@ import React, { useRef, useState, useEffect } from "react";
 import Slider, { Settings } from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
+import { rgbDataURL } from "../utils/blurDataUrl";
 
 interface Props {
   images: string[];
@@ -55,8 +56,9 @@ export default function ProductImageGallery(props: Props) {
               width={500}
               height={500}
               priority
-              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
               style={{ width: "100%", height: "auto" }}
+              placeholder="blur"
+              blurDataURL={rgbDataURL(237, 181, 6)}
             />
           );
         })}
@@ -74,6 +76,8 @@ export default function ProductImageGallery(props: Props) {
               height={80}
               priority
               style={{ width: "80px", height: "auto" }}
+              placeholder="blur"
+              blurDataURL={rgbDataURL(237, 181, 6)}
             />
           );
         })}
