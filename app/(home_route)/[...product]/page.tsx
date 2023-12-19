@@ -2,7 +2,7 @@ import ProductView from "@/app/components/ProductView";
 import startDb from "@/app/lib/db";
 import ProductModel from "@models/productModel";
 import { isValidObjectId } from "mongoose";
-import { redirect } from "next/navigation";
+import { redirect, useRouter } from "next/navigation";
 import React from "react";
 
 interface Props {

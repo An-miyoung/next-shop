@@ -7,6 +7,7 @@ import { getServerSession } from "next-auth";
 import { authConfig } from "@/auth";
 import startDb from "@lib/db";
 import UserModel from "@models/userModel";
+import LoadingProfile from "./loading";
 
 export const fetchUserProfile = async () => {
   const session = await getServerSession(authConfig);

@@ -51,11 +51,12 @@ export default function ProductImageGallery(props: Props) {
             <Image
               key={index}
               src={img}
-              alt="testing"
+              alt="thumbnail image"
               width={500}
               height={500}
-              priority={false}
-              style={{ width: "auto", height: "auto" }}
+              priority
+              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+              style={{ width: "100%", height: "auto" }}
             />
           );
         })}
@@ -68,11 +69,11 @@ export default function ProductImageGallery(props: Props) {
               className={index === currentSlide ? "ring ring-blue-500" : ""}
               key={index}
               src={img}
-              alt="testing"
+              alt="product image"
               width={80}
               height={80}
-              priority={false}
-              style={{ width: "auto", height: "auto" }}
+              priority
+              style={{ width: "80px", height: "auto" }}
             />
           );
         })}
