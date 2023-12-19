@@ -53,7 +53,11 @@ export default function ProductCard({ product }: Props) {
 
   return (
     <Card className="w-full">
-      <Link className="w-full" href={`/${product.title}/${product.id}`}>
+      <Link
+        className="w-full"
+        href={`/${product.title}/${product.id}`}
+        scroll={false}
+      >
         <CardHeader
           shadow={false}
           floated={false}

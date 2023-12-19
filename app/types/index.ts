@@ -43,6 +43,12 @@ export interface UpdatePasswordRequest {
   token: string;
   password: string;
 }
+// Profile
+export interface UserProfileToUpdate {
+  id: string;
+  name: string;
+  avatar?: { url: string; id: string };
+}
 
 // Product
 export interface Product {

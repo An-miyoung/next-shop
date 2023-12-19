@@ -6,7 +6,7 @@ import ProductCard from "@components/ProductCard";
 import FeaturedProductsSlider from "@components/FeaturedProductSlider";
 import FeaturedProductModel from "@models/featuredProductModel";
 import HorizontalMenu from "@components/HorizontalMenu";
-import StickySearch from "../components/StickySearchBar";
+import StickySearch from "@components/StickySearchBar";
 
 interface FetchedProduct {
   id: string;
