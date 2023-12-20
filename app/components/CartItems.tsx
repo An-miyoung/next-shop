@@ -6,6 +6,8 @@ import Image from "next/image";
 import { XMarkIcon } from "@heroicons/react/24/outline";
 import { Button } from "@material-tailwind/react";
 import { rgbDataURL } from "@utils/blurDataUrl";
+import startDb from "@lib/db";
+import { useRouter } from "next/navigation";
 
 export interface Product {
   id: string;
@@ -28,10 +30,24 @@ const CartItems: React.FC<CartItemsProps> = ({
   totalQty,
   cartTotal,
 }) => {
+  const router = useRouter();
   const [busy, setBusy] = useState(false);
+
+  const updateCart = async (productId: string, quantity: number) => {
+    setBusy(true);
+
+    await fetch("/api/product/cart", {
+      method: "POST",
+      body: JSON.stringify({ productId, quantity }),
+    });
+
+    router.refresh();
+    setBusy(false);
+  };
 
   return (
     <div>
+      {/* 큰 화면 */}
       <div className="hidden md:flex">
         <table className="min-w-full divide-y divide-gray-200">
           <tbody className="bg-white divide-y divide-gray-200">
@@ -54,13 +70,25 @@ const CartItems: React.FC<CartItemsProps> = ({
                   {`${product.totalPrice.toLocaleString()}원`}
                 </td>
                 <td className="py-4 ">
-                  <CartCountUpdater value={product.quantity} disabled={busy} />
+                  <CartCountUpdater
+                    onDecrement={() => {
+                      updateCart(product.id, -1);
+                    }}
+                    onIncrement={() => {
+                      updateCart(product.id, 1);
+                    }}
+                    value={product.quantity}
+                    disabled={busy}
+                  />
                 </td>
                 <td className="py-4 text-right">
                   <button
                     disabled={busy}
                     className="text-red-500"
                     style={{ opacity: busy ? "0.5" : "1" }}
+                    onClick={() => {
+                      updateCart(product.id, -product.quantity);
+                    }}
                   >
                     <XMarkIcon className="w-5 h-5" />
                   </button>
@@ -70,7 +98,7 @@ const CartItems: React.FC<CartItemsProps> = ({
           </tbody>
         </table>
       </div>
-
+      {/* 모바일 화면 */}
       <div className=" md:hidden px-2 pb-4">
         {products.map((product) => (
           <div
@@ -83,6 +111,9 @@ const CartItems: React.FC<CartItemsProps> = ({
                 disabled={busy}
                 className="text-red-500"
                 style={{ opacity: busy ? "0.5" : "1" }}
+                onClick={() => {
+                  updateCart(product.id, -product.quantity);
+                }}
               >
                 <XMarkIcon className="w-5 h-5" />
               </button>
@@ -103,7 +134,16 @@ const CartItems: React.FC<CartItemsProps> = ({
                   {`${product.totalPrice.toLocaleString()}원`}
                 </div>
                 <div className="">
-                  <CartCountUpdater value={product.quantity} disabled={busy} />
+                  <CartCountUpdater
+                    onDecrement={() => {
+                      updateCart(product.id, -1);
+                    }}
+                    onIncrement={() => {
+                      updateCart(product.id, 1);
+                    }}
+                    value={product.quantity}
+                    disabled={busy}
+                  />
                 </div>
               </div>
             </div>

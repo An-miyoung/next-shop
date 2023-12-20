@@ -46,7 +46,7 @@ export const POST = async (req: Request) => {
     // 이미 장바구니와 상품이 있고, 수량을 변경할때
     if (existingItem) {
       existingItem.quantity += quantity;
-      if (existingItem.quantity < 0) {
+      if (existingItem.quantity <= 0) {
         // 수량이 0이면 상품을 제거한다.
         cart.items = cart.items.filter(
           (item) => item.productId.toString() !== productId

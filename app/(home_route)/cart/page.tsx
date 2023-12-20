@@ -1,11 +1,10 @@
-import { PageNotFound } from "@/app/components/404";
-import CartItems from "@/app/components/CartItems";
-import startDb from "@/app/lib/db";
-import CartModel from "@/app/models/cartModel";
+import CartEmptyPage from "@components/CartEmptyPage";
+import CartItems from "@components/CartItems";
+import startDb from "@lib/db";
+import CartModel from "@models/cartModel";
 import { authConfig } from "@/auth";
 import { Types } from "mongoose";
 import { getServerSession } from "next-auth";
-import { redirect } from "next/navigation";
 import React from "react";
 
 const fetchCartProducts = async () => {
@@ -79,16 +78,17 @@ export default async function Cart() {
   const fetchedData = await fetchCartProducts();
   const cart = fetchedData && JSON.parse(fetchedData);
 
-  if (!cart) return <PageNotFound />;
+  if (!cart) return <CartEmptyPage />;
 
   const { id, products, totalQty, totalPrice } = cart;
 
   return (
-    <CartItems
-      cartId={id}
-      products={products}
-      totalQty={totalQty}
-      cartTotal={totalPrice}
-    />
+    <CartEmptyPage />
+    // <CartItems
+    //   cartId={id}
+    //   products={products}
+    //   totalQty={totalQty}
+    //   cartTotal={totalPrice}
+    // />
   );
 }
