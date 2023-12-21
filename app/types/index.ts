@@ -169,3 +169,12 @@ export interface CartItems {
   totalPrice: number;
   products: CartProduct[];
 }
+
+// stripe
+export interface stripeCustomer {
+  metadata: {
+    userId: string;
+    cartId: string;
+    type: string;
+  };
+}
