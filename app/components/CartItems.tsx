@@ -7,6 +7,7 @@ import { XMarkIcon } from "@heroicons/react/24/outline";
 import { Button } from "@material-tailwind/react";
 import { rgbDataURL } from "@utils/blurDataUrl";
 import { useRouter } from "next/navigation";
+import { toast } from "react-toastify";
 // import { loadStripe } from "@stripe/stripe-js";
 
 // testMode 가 아닌 경우 실제 고객결제시 선언할 듯
@@ -36,6 +37,7 @@ const CartItems: React.FC<CartItemsProps> = ({
   products = [],
   totalQty,
   cartTotal,
+  cartId,
 }) => {
   const router = useRouter();
   const [busy, setBusy] = useState(false);
@@ -49,6 +51,25 @@ const CartItems: React.FC<CartItemsProps> = ({
     });
 
     router.refresh();
+    setBusy(false);
+  };
+
+  const handleCheckout = async () => {
+    setBusy(true);
+
+    const res = await fetch("/api/checkout", {
+      method: "POST",
+      body: JSON.stringify({ cartId }),
+    });
+
+    const { error, url } = await res.json();
+    if (!res.ok) {
+      toast.warning(error);
+      router.refresh();
+    } else {
+      // 결제 url 로 이용
+      window.location.href = url;
+    }
     setBusy(false);
   };
 
@@ -170,6 +191,7 @@ const CartItems: React.FC<CartItemsProps> = ({
           className="shadow-none hover:shadow-none  focus:shadow-none focus:scale-105 active:scale-100"
           color="green"
           disabled={busy}
+          onClick={handleCheckout}
         >
           결제하기
         </Button>
