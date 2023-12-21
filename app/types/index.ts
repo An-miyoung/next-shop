@@ -152,3 +152,20 @@ export interface UpdateFeaturedProduct {
   link: string;
   linkTitle: string;
 }
+
+// cart
+interface CartProduct {
+  id: string;
+  thumbnail: string;
+  title: string;
+  price: number;
+  quantity: number;
+  totalPrice: number;
+}
+
+export interface CartItems {
+  id: string;
+  totalQty: number;
+  totalPrice: number;
+  products: CartProduct[];
+}

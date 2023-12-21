@@ -1,11 +1,9 @@
 import { useSession } from "next-auth/react";
-import { SessionUserProfile } from "@app/types";
 
 interface Auth {
   loggedIn: boolean;
   loading: boolean;
   isAdmin: boolean;
-  profile?: SessionUserProfile | undefined;
 }
 
 export default function useAuth(): Auth {
@@ -18,6 +16,5 @@ export default function useAuth(): Auth {
     // session.data.user의 DefaultSessionUser 는 role 등등의 필드가 없기 때문에
     // auth.ts 에서 모듈을 재선언해줘야 한다.
     isAdmin: user?.role === "admin",
-    profile: user,
   };
 }

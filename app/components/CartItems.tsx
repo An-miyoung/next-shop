@@ -6,8 +6,15 @@ import Image from "next/image";
 import { XMarkIcon } from "@heroicons/react/24/outline";
 import { Button } from "@material-tailwind/react";
 import { rgbDataURL } from "@utils/blurDataUrl";
-import startDb from "@lib/db";
 import { useRouter } from "next/navigation";
+// import { loadStripe } from "@stripe/stripe-js";
+
+// testMode 가 아닌 경우 실제 고객결제시 선언할 듯
+// Make sure to call `loadStripe` outside of a component’s render to avoid
+// recreating the `Stripe` object on every render.
+// const stripePromise = loadStripe(
+//   process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!
+// );
 
 export interface Product {
   id: string;
