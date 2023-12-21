@@ -35,7 +35,7 @@ export default async function Profile() {
 
   return (
     <div>
-      {!verified && <EmailVerificationBanner />}
+      {!verified && <EmailVerificationBanner id={id} verified={verified} />}
       <div className="md:flex p-4 space-y-4">
         <div className="md:border-r md:border-gray-700 p-2 space-y-2 md:p-4 md:space-y-4">
           <ProfileForm avatar={avatar} email={email} id={id} name={name} />
