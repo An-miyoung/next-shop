@@ -12,17 +12,14 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import truncate from "truncate";
-import useAuth from "../hooks/useAuth";
+import useAuth from "@hooks/useAuth";
 import { toast } from "react-toastify";
 import { useTransition } from "react";
-// import { loadStripe } from "@stripe/stripe-js";
+import { loadStripe } from "@stripe/stripe-js";
 
-// testMode 가 아닌 경우 실제 고객결제시 선언할 듯
-// Make sure to call `loadStripe` outside of a component’s render to avoid
-// recreating the `Stripe` object on every render.
-// const stripePromise = loadStripe(
-//   process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!
-// );
+const stripePromise = loadStripe(
+  process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!
+);
 
 interface Props {
   product: {
@@ -57,6 +54,23 @@ export default function ProductCard({ product }: Props) {
     if (!res.ok && error) toast.warning(error.message);
 
     router.refresh();
+  };
+
+  const handleCheckout = async () => {
+    const res = await fetch("/api/checkout/instance", {
+      method: "POST",
+      body: JSON.stringify({ productId: product.id }),
+    });
+
+    const { error, url } = await res.json();
+    if (!res.ok) {
+      toast.warning(error);
+      router.refresh();
+    } else {
+      // 결제 url 로 이용
+      // window.location.href = url;
+      router.push(url);
+    }
   };
 
   return (
@@ -108,15 +122,16 @@ export default function ProductCard({ product }: Props) {
       </Link>
       <CardFooter className="pt-0 space-y-4">
         <Button
+          onClick={() => startTransition(async () => await addToCart())}
           ripple={false}
           fullWidth={true}
           className="bg-blue-gray-900/10 text-blue-gray-900 shadow-none hover:shadow-none hover:scale-105 focus:shadow-none focus:scale-105 active:scale-100"
           disabled={isPending}
-          onClick={() => startTransition(async () => await addToCart())}
         >
           장바구니에 넣기
         </Button>
         <Button
+          onClick={() => startTransition(async () => await handleCheckout())}
           ripple={false}
           fullWidth={true}
           className="bg-blue-400 text-white shadow-none hover:shadow-none hover:scale-105 focus:shadow-none focus:scale-105 active:scale-100"

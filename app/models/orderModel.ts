@@ -22,7 +22,7 @@ interface OrderModelDocument extends Document {
   orderItems: {
     id: string;
     title: string;
-    thumbnaill: string;
+    thumbnail: string;
     price: number;
     quantity: number;
     totalPrice: number;

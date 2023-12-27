@@ -74,7 +74,7 @@ const CartItems: React.FC<CartItemsProps> = ({
   return (
     <div>
       {/* 큰 화면 */}
-      <div className="hidden md:flex">
+      <div className="hidden md:flex md:px-2">
         <table className="min-w-full divide-y divide-gray-200">
           <tbody className="bg-white divide-y divide-gray-200">
             {products.map((product) => (

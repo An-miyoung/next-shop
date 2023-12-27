@@ -154,7 +154,7 @@ export interface UpdateFeaturedProduct {
 }
 
 // cart
-interface CartProduct {
+export interface CartProduct {
   id: string;
   thumbnail: string;
   title: string;
@@ -175,6 +175,7 @@ export interface stripeCustomer {
   metadata: {
     userId: string;
     cartId: string;
-    type: string;
+    type: "checkout" | "instance-checkout";
+    product: string;
   };
 }

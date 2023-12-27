@@ -4,9 +4,11 @@
 import { getCartItems } from "@lib/cartHelper";
 import startDb from "@lib/db";
 import OrderModel from "@models/orderModel";
-import { stripeCustomer } from "@app/types";
+import { CartProduct, stripeCustomer } from "@app/types";
 import { NextResponse } from "next/server";
 import Stripe from "stripe";
+import ProductModel from "@/app/models/productModel";
+import CartModel from "@/app/models/cartModel";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
   apiVersion: "2023-10-16",
@@ -62,7 +64,7 @@ export const POST = async (req: Request) => {
     )) as unknown as stripeCustomer;
 
     const {
-      metadata: { userId, cartId, type },
+      metadata: { userId, cartId, type, product },
     } = customer;
     // 새로운 order 객체를 DB에 만듬
     if (type === "checkout") {
@@ -83,8 +85,46 @@ export const POST = async (req: Request) => {
         deliveredStatus: "ordered",
         orderItems: cartItems.products,
       });
+      // 재고계산
+      //  updateProductPromises 를 쓰는 이유는 map을 돌면 이미지 파일들을 로딩하는 것을 기다려 한꺼번에 완료하기 위해서
+      const updateProductPromises = cartItems.products.map(async (product) => {
+        return await ProductModel.findByIdAndUpdate(product.id, {
+          $inc: {
+            quantity: -product.quantity,
+          },
+        });
+      });
+      await Promise.all(updateProductPromises);
+
+      // 장바구니 비우기
+      await CartModel.findByIdAndDelete(cartId);
     }
-    // 재고계산
+
+    if (type === "instance-checkout") {
+      const orderItem: CartProduct = JSON.parse(product);
+
+      await startDb();
+      await OrderModel.create({
+        userId,
+        stripeCustomerId: stripeSession.customer,
+        paymentIntent: stripeSession.payment_intent,
+        totalAmount: stripeSession.amount_subtotal,
+        shippingDetails: {
+          address: stripeSession.customer_details.address,
+          email: stripeSession.customer_details.email,
+          name: stripeSession.customer_details.name,
+        },
+        paymentStatus: stripeSession.payment_status,
+        deliveredStatus: "ordered",
+        orderItems: [{ ...orderItem }],
+      });
+      // 재고계산
+      await ProductModel.findByIdAndUpdate(orderItem.id, {
+        $inc: {
+          quantity: -1,
+        },
+      });
+    }
   }
 
   return NextResponse.json({}, { status: 200 });
