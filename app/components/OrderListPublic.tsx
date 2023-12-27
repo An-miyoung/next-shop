@@ -3,7 +3,11 @@ import Image from "next/image";
 import React from "react";
 import dateFormat from "dateformat";
 import { Chip } from "@material-tailwind/react";
-import { rgbDataURL } from "../utils/blurDataUrl";
+import { rgbDataURL } from "@utils/blurDataUrl";
+import {
+  deleveryStatusToKorean,
+  paymentStatusToKorean,
+} from "@utils/transKoran";
 
 type product = {
   id: string;
@@ -22,32 +26,6 @@ export interface Orders {
   total: number;
   deliveryStatus: "ordered" | "delivered" | "shipped";
 }
-
-const deleveryStatusToKorean = (status: string) => {
-  switch (status) {
-    case "ordered":
-      return "주문완료";
-    case "shipping":
-      return "배송중";
-    case "delivered":
-      return "배송완료";
-    default:
-      return "주문완료";
-  }
-};
-
-const paymentStatusToKorean = (status: string) => {
-  switch (status) {
-    case "paid":
-      return "결제완료";
-    case "unpaid":
-      return "결제미완료";
-    case "no_payment_required":
-      return "결제대기중";
-    default:
-      return "결제미완료";
-  }
-};
 
 export default function OrderListPublic({ orders }: { orders: Orders[] }) {
   return (

@@ -3,8 +3,8 @@ import startDb from "@/app/lib/db";
 import OrderModel from "@/app/models/orderModel";
 import { authConfig } from "@/auth";
 import { getServerSession } from "next-auth";
-import { redirect } from "next/navigation";
 import React from "react";
+import { PageNotFound } from "@/app/components/404";
 
 const fetchOrders = async () => {
   const session = await getServerSession(authConfig);
@@ -28,7 +28,7 @@ const fetchOrders = async () => {
 
 export default async function OrdersPage() {
   const orders = await fetchOrders();
-  if (!orders) return redirect("/404");
+  if (!orders) return <PageNotFound />;
 
   return (
     <div>

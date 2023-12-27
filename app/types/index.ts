@@ -179,3 +179,27 @@ export interface stripeCustomer {
     product: string;
   };
 }
+
+// orders
+type product = {
+  id: string;
+  title: string;
+  thumbnail: string;
+  totalPrice: number;
+  price: number;
+  quantity: number;
+};
+
+export interface Order {
+  id: string;
+  customer: {
+    id: string;
+    name: string;
+    email: string;
+    avatar?: string;
+    address: { [key: string]: string | null };
+  };
+  subTotal: number;
+  products: product[];
+  deliveryStatus: string;
+}
