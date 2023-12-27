@@ -34,98 +34,109 @@ export const POST = async (req: Request) => {
     );
   }
 
-  // event 종류가 많으면 switch case 로 사용
-  // 우리는 결제가 완료된 직후, order 를 만들어 배송을 관리하는데 사용
-  if (event.type === "checkout.session.completed") {
-    // stripeSession.customer 는 string | Stripe.Customer | Stripe.DeletedCustomer | null형태이므로
-    // customer 를 string 형태로 재선언해 오류를 제거
-    // customer 를 이용해 order 를 만들기 위해 type을 선언해 준다.(console 로 찍어본 후 집어넣는 형식)
-    const stripeSession = event.data.object as unknown as {
-      customer: string;
-      payment_intent: string;
-      payment_status: string;
-      amount_subtotal: number;
-      customer_details: {
-        address: {
-          city: string;
-          country: string;
-          line1: string;
-          line2: string | null;
-          postal_code: string;
-          state: string;
+  try {
+    // event 종류가 많으면 switch case 로 사용
+    // 우리는 결제가 완료된 직후, order 를 만들어 배송을 관리하는데 사용
+    if (event.type === "checkout.session.completed") {
+      // stripeSession.customer 는 string | Stripe.Customer | Stripe.DeletedCustomer | null형태이므로
+      // customer 를 string 형태로 재선언해 오류를 제거
+      // customer 를 이용해 order 를 만들기 위해 type을 선언해 준다.(console 로 찍어본 후 집어넣는 형식)
+      const stripeSession = event.data.object as unknown as {
+        customer: string;
+        payment_intent: string;
+        payment_status: string;
+        amount_subtotal: number;
+        customer_details: {
+          address: {
+            city: string;
+            country: string;
+            line1: string;
+            line2: string | null;
+            postal_code: string;
+            state: string;
+          };
+          email: string;
+          name: string;
         };
-        email: string;
-        name: string;
       };
-    };
 
-    const customer = (await stripe.customers.retrieve(
-      stripeSession.customer
-    )) as unknown as stripeCustomer;
+      const customer = (await stripe.customers.retrieve(
+        stripeSession.customer
+      )) as unknown as stripeCustomer;
 
-    const {
-      metadata: { userId, cartId, type, product },
-    } = customer;
-    // 새로운 order 객체를 DB에 만듬
-    if (type === "checkout") {
-      const cartItems = await getCartItems(userId, cartId);
+      const {
+        metadata: { userId, cartId, type, product },
+      } = customer;
+      // 새로운 order 객체를 DB에 만듬
+      if (type === "checkout") {
+        const cartItems = await getCartItems(userId, cartId);
 
-      await startDb();
-      await OrderModel.create({
-        userId,
-        stripeCustomerId: stripeSession.customer,
-        paymentIntent: stripeSession.payment_intent,
-        totalAmount: stripeSession.amount_subtotal,
-        shippingDetails: {
-          address: stripeSession.customer_details.address,
-          email: stripeSession.customer_details.email,
-          name: stripeSession.customer_details.name,
-        },
-        paymentStatus: stripeSession.payment_status,
-        deliveredStatus: "ordered",
-        orderItems: cartItems.products,
-      });
-      // 재고계산
-      //  updateProductPromises 를 쓰는 이유는 map을 돌면 이미지 파일들을 로딩하는 것을 기다려 한꺼번에 완료하기 위해서
-      const updateProductPromises = cartItems.products.map(async (product) => {
-        return await ProductModel.findByIdAndUpdate(product.id, {
+        await startDb();
+        await OrderModel.create({
+          userId,
+          stripeCustomerId: stripeSession.customer,
+          paymentIntent: stripeSession.payment_intent,
+          totalAmount: stripeSession.amount_subtotal,
+          shippingDetails: {
+            address: stripeSession.customer_details.address,
+            email: stripeSession.customer_details.email,
+            name: stripeSession.customer_details.name,
+          },
+          paymentStatus: stripeSession.payment_status,
+          deliveredStatus: "ordered",
+          orderItems: cartItems.products,
+        });
+        // 재고계산
+        //  updateProductPromises 를 쓰는 이유는 map을 돌면 이미지 파일들을 로딩하는 것을 기다려 한꺼번에 완료하기 위해서
+        const updateProductPromises = cartItems.products.map(
+          async (product) => {
+            return await ProductModel.findByIdAndUpdate(product.id, {
+              $inc: {
+                quantity: -product.quantity,
+              },
+            });
+          }
+        );
+        await Promise.all(updateProductPromises);
+
+        // 장바구니 비우기
+        await CartModel.findByIdAndDelete(cartId);
+      }
+
+      if (type === "instance-checkout") {
+        const orderItem: CartProduct = JSON.parse(product);
+
+        await startDb();
+        await OrderModel.create({
+          userId,
+          stripeCustomerId: stripeSession.customer,
+          paymentIntent: stripeSession.payment_intent,
+          totalAmount: stripeSession.amount_subtotal,
+          shippingDetails: {
+            address: stripeSession.customer_details.address,
+            email: stripeSession.customer_details.email,
+            name: stripeSession.customer_details.name,
+          },
+          paymentStatus: stripeSession.payment_status,
+          deliveredStatus: "ordered",
+          orderItems: [{ ...orderItem }],
+        });
+        // 재고계산
+        await ProductModel.findByIdAndUpdate(orderItem.id, {
           $inc: {
-            quantity: -product.quantity,
+            quantity: -1,
           },
         });
-      });
-      await Promise.all(updateProductPromises);
-
-      // 장바구니 비우기
-      await CartModel.findByIdAndDelete(cartId);
+      }
     }
 
-    if (type === "instance-checkout") {
-      const orderItem: CartProduct = JSON.parse(product);
-
-      await startDb();
-      await OrderModel.create({
-        userId,
-        stripeCustomerId: stripeSession.customer,
-        paymentIntent: stripeSession.payment_intent,
-        totalAmount: stripeSession.amount_subtotal,
-        shippingDetails: {
-          address: stripeSession.customer_details.address,
-          email: stripeSession.customer_details.email,
-          name: stripeSession.customer_details.name,
-        },
-        paymentStatus: stripeSession.payment_status,
-        deliveredStatus: "ordered",
-        orderItems: [{ ...orderItem }],
-      });
-      // 재고계산
-      await ProductModel.findByIdAndUpdate(orderItem.id, {
-        $inc: {
-          quantity: -1,
-        },
-      });
-    }
+    return NextResponse.json({}, { status: 200 });
+  } catch (error: any) {
+    return NextResponse.json(
+      {
+        error: error.message,
+      },
+      { status: 500 }
+    );
   }
-
-  return NextResponse.json({}, { status: 200 });
 };
