@@ -1,9 +1,9 @@
 // checkout/route.ts 내에서는 checkout session 을 create 할뿐, order객체를 동시에 만들수 없어서
 // Stripe 가 제공하는 webhook 의 event 에 따라 checkout.session.completed 이면 order를 생성
 
-import { getCartItems } from "@/app/lib/cartHelper";
-import startDb from "@/app/lib/db";
-import OrderModel from "@/app/models/orderModel";
+import { getCartItems } from "@lib/cartHelper";
+import startDb from "@lib/db";
+import OrderModel from "@models/orderModel";
 import { stripeCustomer } from "@app/types";
 import { NextResponse } from "next/server";
 import Stripe from "stripe";
@@ -33,6 +33,7 @@ export const POST = async (req: Request) => {
   }
 
   // event 종류가 많으면 switch case 로 사용
+  // 우리는 결제가 완료된 직후, order 를 만들어 배송을 관리하는데 사용
   if (event.type === "checkout.session.completed") {
     // stripeSession.customer 는 string | Stripe.Customer | Stripe.DeletedCustomer | null형태이므로
     // customer 를 string 형태로 재선언해 오류를 제거
@@ -43,13 +44,21 @@ export const POST = async (req: Request) => {
       payment_status: string;
       amount_subtotal: number;
       customer_details: {
-        address: any;
+        address: {
+          city: string;
+          country: string;
+          line1: string;
+          line2: string | null;
+          postal_code: string;
+          state: string;
+        };
         email: string;
         name: string;
       };
     };
+
     const customer = (await stripe.customers.retrieve(
-      stripeSession?.customer
+      stripeSession.customer
     )) as unknown as stripeCustomer;
 
     const {
@@ -66,7 +75,7 @@ export const POST = async (req: Request) => {
         paymentIntent: stripeSession.payment_intent,
         totalAmount: stripeSession.amount_subtotal,
         shippingDetails: {
-          address: stripeSession.customer_details,
+          address: stripeSession.customer_details.address,
           email: stripeSession.customer_details.email,
           name: stripeSession.customer_details.name,
         },
