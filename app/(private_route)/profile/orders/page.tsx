@@ -12,7 +12,7 @@ const fetchOrders = async () => {
 
   const userId = session.user.id;
   await startDb();
-  const orders = await OrderModel.find({ userId });
+  const orders = await OrderModel.find({ userId }).sort("-created");
   if (!orders) return null;
 
   const results: Orders[] = orders.map((order) => ({

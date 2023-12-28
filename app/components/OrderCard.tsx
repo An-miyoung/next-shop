@@ -2,10 +2,12 @@
 
 import { Avatar, Option, Select } from "@material-tailwind/react";
 import Image from "next/image";
-import React from "react";
+import React, { useTransition } from "react";
 import { Order } from "../types";
 import { deleveryStatusToKorean } from "@utils/transKoran";
 import { rgbDataURL } from "@utils/blurDataUrl";
+import { toast } from "react-toastify";
+import { useRouter } from "next/navigation";
 
 interface Props {
   order: Order;
@@ -60,9 +62,9 @@ const formatAddress = ({
 };
 
 export default function OrderCard({ order, disableUpdate = true }: Props) {
-  const handleChange = () => {
-    // 나중에
-  };
+  const router = useRouter();
+  const [isPending, startTransition] = useTransition();
+
   return (
     <div className="space-y-4 rounded border-blue-gray-800 border border-dashed p-4">
       <div className="flex justify-between pr-2">
@@ -90,10 +92,20 @@ export default function OrderCard({ order, disableUpdate = true }: Props) {
         </div>
         <div>
           <Select
-            disabled={disableUpdate}
-            value={deleveryStatusToKorean(order.deliveryStatus)}
+            disabled={disableUpdate || isPending}
+            value={order.deliveryStatus}
             label="배송상태"
-            onChange={handleChange}
+            onChange={(deliveryStatus) =>
+              startTransition(async () => {
+                await fetch("/api/order/update-status", {
+                  method: "POST",
+                  body: JSON.stringify({
+                    orderId: order.id,
+                    deliveryStatus,
+                  }),
+                });
+              })
+            }
           >
             {ORDER_STATUS.map((op) => (
               <Option value={op} key={op}>
