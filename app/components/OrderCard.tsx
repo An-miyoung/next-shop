@@ -83,8 +83,8 @@ export default function OrderCard({ order, disableUpdate = true }: Props) {
         </div>
       </div>
 
-      <div className="flex items-center justify-between">
-        <div>
+      <div className="md:flex md:items-center md:justify-between">
+        <div className="mb-4 md:mb-0">
           <p className="font-semibold">주소</p>
           <div className="text-sm">
             {formatAddress(order.customer.address as any)}
@@ -134,7 +134,7 @@ export default function OrderCard({ order, disableUpdate = true }: Props) {
               }
             >
               <td className="py-2 px-4">
-                <div className="flex space-x-2">
+                <div className="md:flex md:space-x-2">
                   <Image
                     src={product.thumbnail}
                     width={50}
@@ -148,14 +148,14 @@ export default function OrderCard({ order, disableUpdate = true }: Props) {
                   <div>
                     <p className="font-semibold">{product.title}</p>
                     <p className="text-sm">
-                      단가: {product.price.toLocaleString()}
+                      단가: {product.price.toLocaleString()}원
                     </p>
                     <p className="text-sm">수량: {product.quantity}</p>
                   </div>
                 </div>
               </td>
               <td className="py-2 px-4">
-                총금액: {product.totalPrice.toLocaleString()}원
+                금액: {product.totalPrice.toLocaleString()}원
               </td>
             </tr>
           ))}
