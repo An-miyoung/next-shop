@@ -1,10 +1,13 @@
-import ProductView from "@/app/components/ProductView";
-import startDb from "@/app/lib/db";
+import ProductView from "@components/ProductView";
+import startDb from "@lib/db";
+import ReviewModel from "@models/reviewModel";
 import ProductModel from "@models/productModel";
-import { isValidObjectId } from "mongoose";
+import { ObjectId, isValidObjectId } from "mongoose";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import React from "react";
+import UserModel from "@/app/models/userModel";
+import ReviewsList from "@/app/components/ReviewList";
 
 interface Props {
   params: { product: string[] };
@@ -31,6 +34,33 @@ const fetchOneProduct = async (productId: string) => {
   return JSON.stringify(finalProducts);
 };
 
+const fetchProductReviews = async (productId: string) => {
+  await startDb();
+  const productReviews = await ReviewModel.find({
+    product: productId,
+  }).populate<{
+    userId: { _id: ObjectId; name: string; avatar?: { url: string } };
+  }>({
+    path: "userId",
+    select: "_id name avatar.url",
+    model: UserModel,
+  });
+
+  const finalReviews = productReviews.map((review) => ({
+    id: review._id.toString(),
+    rating: review.rating,
+    comment: review.comment,
+    date: review.createdAt,
+    userInfo: {
+      id: review._id.toString(),
+      name: review.userId.name,
+      avatar: review.userId.avatar?.url,
+    },
+  }));
+
+  return JSON.stringify(finalReviews);
+};
+
 export default async function ProductPage({ params }: Props) {
   const { product } = params;
   const productId = product[1];
@@ -40,6 +70,8 @@ export default async function ProductPage({ params }: Props) {
   if (productInfo.images) {
     productImages = productImages.concat(productInfo.images);
   }
+
+  const reviews = JSON.parse(await fetchProductReviews(productId));
 
   return (
     <div className="p-4">
@@ -51,8 +83,8 @@ export default async function ProductPage({ params }: Props) {
         price={productInfo.price}
         sale={productInfo.sale}
       />
-      <div className="py-4">
-        <div className="flex justify-between items-center">
+      <div className="py-4 space-y-1">
+        <div className="flex justify-between items-center ">
           <h1 className="text-lg text-blue-gray-600 font-semibold mb-2">
             상품후기
           </h1>
@@ -60,6 +92,7 @@ export default async function ProductPage({ params }: Props) {
             <p className=" text-blue-gray-600 ">후기쓰기</p>
           </Link>
         </div>
+        <ReviewsList reviews={reviews} />
       </div>
     </div>
   );

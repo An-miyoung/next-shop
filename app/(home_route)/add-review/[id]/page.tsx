@@ -72,7 +72,11 @@ export default async function Review({ params }: Props) {
         />
         <h3 className="font-semibold">{review.product.title}</h3>
       </div>
-      <ReviewForm productId={productId} initialValue={initialValue} />
+      <ReviewForm
+        productId={productId}
+        productTitle={review.product.title}
+        initialValue={initialValue}
+      />
     </div>
   );
 }
