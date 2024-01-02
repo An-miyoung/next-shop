@@ -203,3 +203,10 @@ export interface Order {
   products: product[];
   deliveryStatus: string;
 }
+
+// Review
+export interface ReviewRequestBody {
+  productId: string;
+  rating: number;
+  comment?: string;
+}

@@ -2,7 +2,8 @@ import ProductView from "@/app/components/ProductView";
 import startDb from "@/app/lib/db";
 import ProductModel from "@models/productModel";
 import { isValidObjectId } from "mongoose";
-import { redirect, useRouter } from "next/navigation";
+import Link from "next/link";
+import { redirect } from "next/navigation";
 import React from "react";
 
 interface Props {
@@ -50,6 +51,16 @@ export default async function ProductPage({ params }: Props) {
         price={productInfo.price}
         sale={productInfo.sale}
       />
+      <div className="py-4">
+        <div className="flex justify-between items-center">
+          <h1 className="text-lg text-blue-gray-600 font-semibold mb-2">
+            상품후기
+          </h1>
+          <Link href={`/add-review/${productInfo.id}`}>
+            <p className=" text-blue-gray-600 ">후기쓰기</p>
+          </Link>
+        </div>
+      </div>
     </div>
   );
 }
