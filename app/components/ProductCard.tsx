@@ -1,4 +1,5 @@
 "use client";
+
 import {
   Card,
   CardHeader,
@@ -16,6 +17,7 @@ import useAuth from "@hooks/useAuth";
 import { toast } from "react-toastify";
 import { useTransition } from "react";
 import { loadStripe } from "@stripe/stripe-js";
+import Rating from "./Rating";
 
 const stripePromise = loadStripe(
   process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!
@@ -33,6 +35,7 @@ interface Props {
       base: number;
       discounted: number;
     };
+    rating?: number;
   };
 }
 
@@ -101,6 +104,13 @@ export default function ProductCard({ product }: Props) {
             <h3 className="line-clamp-1 font-medium text-blue-gray-800">
               {truncate(product.title, 50)}
             </h3>
+            <div className="flex justify-end">
+              {product.rating ? (
+                <Rating value={parseFloat(product.rating.toFixed(1))} />
+              ) : (
+                <Rating value={0} />
+              )}
+            </div>
           </div>
           <div className="flex justify-end items-center space-x-2 mb-2">
             <Typography

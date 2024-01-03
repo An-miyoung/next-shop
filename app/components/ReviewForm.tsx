@@ -9,15 +9,10 @@ import { useRouter } from "next/navigation";
 
 interface Props {
   productId: string;
-  productTitle: string;
   initialValue?: { rating: number; comment: string };
 }
 
-export default function ReviewForm({
-  productId,
-  productTitle,
-  initialValue,
-}: Props) {
+export default function ReviewForm({ productId, initialValue }: Props) {
   const router = useRouter();
   const [isPending, setIsPending] = useState(false);
   const [review, setReview] = useState({
@@ -49,7 +44,7 @@ export default function ReviewForm({
     if (!res.ok && error) {
       toast.warning(error);
     } else if (success) {
-      router.push(`/${productTitle}/${productId}`);
+      router.back();
     }
   };
 

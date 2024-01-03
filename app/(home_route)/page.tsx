@@ -16,6 +16,7 @@ interface FetchedProduct {
   thumbnail: string;
   price: { base: number; discounted: number };
   sale: number;
+  rating?: number;
 }
 
 const fetchFeaturedProduct = async () => {
@@ -50,6 +51,7 @@ const fetchLatestProducts = async () => {
       thumbnail: product.thumbnail.url,
       price: product.price,
       sale: product.sale,
+      rating: product.rating,
     }));
 
     return JSON.stringify(finalProducts);

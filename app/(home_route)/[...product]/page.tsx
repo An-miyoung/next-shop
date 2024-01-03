@@ -29,6 +29,7 @@ const fetchOneProduct = async (productId: string) => {
     images: product.images?.map((image) => image.url),
     price: product.price,
     sale: product.sale,
+    rating: product.rating,
   };
 
   return JSON.stringify(finalProducts);
@@ -82,6 +83,7 @@ export default async function ProductPage({ params }: Props) {
         points={productInfo.bulletPoints}
         price={productInfo.price}
         sale={productInfo.sale}
+        rating={productInfo.rating}
       />
       <div className="py-4 space-y-1">
         <div className="flex justify-between items-center ">
