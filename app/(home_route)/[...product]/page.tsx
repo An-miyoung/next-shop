@@ -7,8 +7,11 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import React from "react";
 import UserModel from "@/app/models/userModel";
-import ReviewsList from "@/app/components/ReviewList";
-import SimilarProductsList from "@/app/components/SimilarProductsList";
+import ReviewsList from "@components/ReviewList";
+import SimilarProductsList from "@components/SimilarProductsList";
+import { updateOrCreateHistory } from "@models/historyModel";
+import { getServerSession } from "next-auth";
+import { authConfig } from "@/auth";
 
 interface Props {
   params: { product: string[] };
@@ -19,6 +22,11 @@ const fetchOneProduct = async (productId: string) => {
   await startDb();
   const product = await ProductModel.findById(productId);
   if (!product) return redirect("/404");
+
+  const session = await getServerSession(authConfig);
+  if (!session?.user) return redirect("/auth/signin");
+  // 방문기록 남기기
+  await updateOrCreateHistory(session.user.id, product._id.toString());
 
   const finalProducts = {
     id: product._id.toString(),
@@ -83,6 +91,7 @@ const fetchProductReviews = async (productId: string) => {
 export default async function ProductPage({ params }: Props) {
   const { product } = params;
   const productId = product[1];
+
   const productInfo = JSON.parse(await fetchOneProduct(productId));
 
   let productImages = [productInfo.thumbnail];
