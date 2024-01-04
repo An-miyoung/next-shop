@@ -71,7 +71,9 @@ export default async function Home() {
     <>
       <StickySearch />
       <div className="py-4 space-y-4">
-        <CategoryMenu />
+        <div className="hidden md:block">
+          <CategoryMenu />
+        </div>
         <FeaturedProductsSlider products={featuredProducts} />
         <GridView>
           {products.map((product) => (

@@ -3,8 +3,8 @@ import startDb from "@lib/db";
 import ProductModel from "@models/productModel";
 import GridView from "@components/GridView";
 import ProductCard from "@components/ProductCard";
-import HorizontalMenu from "@components/HorizontalMenu";
-import StickySearch from "@/app/components/StickySearchBar";
+import StickySearch from "@components/StickySearchBar";
+import CategoryMenu from "@components/CategoryMenu";
 
 interface Props {
   params: { category: string };
@@ -18,6 +18,7 @@ interface FetchedProduct {
   thumbnail: string;
   price: { base: number; discounted: number };
   sale: number;
+  outOfStock: boolean;
 }
 
 const fetchProductsByCategory = async (category: string) => {
@@ -35,6 +36,7 @@ const fetchProductsByCategory = async (category: string) => {
       thumbnail: product.thumbnail.url,
       price: product.price,
       sale: product.sale,
+      outOfStock: product.quantity <= 0,
     }));
 
     return JSON.stringify(finalProducts);
@@ -54,7 +56,7 @@ export default async function ProductByCategory({ params }: Props) {
     <>
       <StickySearch />
       <div className="py-4 space-y-4">
-        <HorizontalMenu />
+        <CategoryMenu />
         {products.length ? (
           <GridView>
             {products.map((product: FetchedProduct) => (

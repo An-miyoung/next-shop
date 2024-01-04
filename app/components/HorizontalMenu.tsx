@@ -43,7 +43,7 @@ function RightArrow() {
 
 export default function HorizontalMenu({ title, children }: Props) {
   return (
-    <div className="hidden md:block">
+    <div>
       <p className=" text-xs text-blue-gray-500 pl-10">{`${title} : `}</p>
       <ScrollMenu LeftArrow={LeftArrow} RightArrow={RightArrow}>
         {children}

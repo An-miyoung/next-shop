@@ -8,6 +8,7 @@ import { redirect } from "next/navigation";
 import React from "react";
 import UserModel from "@/app/models/userModel";
 import ReviewsList from "@/app/components/ReviewList";
+import SimilarProductsList from "@/app/components/SimilarProductsList";
 
 interface Props {
   params: { product: string[] };
@@ -36,9 +37,11 @@ const fetchOneProduct = async (productId: string) => {
   return JSON.stringify(finalProducts);
 };
 
-const fetchSimilarProduct = async () => {
+const fetchSimilarProduct = async (category: string) => {
   await startDb();
-  const products = await ProductModel.find().sort({ rating: -1 }).limit(10);
+  const products = await ProductModel.find({ category })
+    .sort({ rating: -1 })
+    .limit(10);
 
   return products.map((product) => ({
     id: product._id.toString(),
@@ -87,7 +90,7 @@ export default async function ProductPage({ params }: Props) {
     productImages = productImages.concat(productInfo.images);
   }
 
-  const similarProducts = await fetchSimilarProduct();
+  const similarProducts = await fetchSimilarProduct(productInfo.category);
 
   const reviews = JSON.parse(await fetchProductReviews(productId));
 
@@ -103,7 +106,12 @@ export default async function ProductPage({ params }: Props) {
         rating={productInfo.rating}
         outOfStock={productInfo.outOfStock}
       />
-      <div>{JSON.stringify(similarProducts)}</div>
+      <div>
+        <h1 className="text-lg text-blue-gray-600 font-semibold mb-2">
+          관심있을만한 상품
+        </h1>
+        <SimilarProductsList products={similarProducts} />
+      </div>
       <div className="py-4 space-y-1">
         <div className="flex justify-between items-center ">
           <h1 className="text-lg text-blue-gray-600 font-semibold mb-2">
