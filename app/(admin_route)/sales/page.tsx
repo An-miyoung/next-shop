@@ -1,3 +1,6 @@
+import GridView from "@/app/components/GridView";
+import SalesChart from "@/app/components/SalesChart";
+import { formatPrice } from "@/app/utils/formatPrice";
 import startDb from "@lib/db";
 import OrderModel from "@models/orderModel";
 import dateFormat from "dateformat";
@@ -32,7 +35,7 @@ const sevenDaysSalesHistory = async () => {
 
   // saels 가격이 0인 날을 비교
   const dateList: string[] = [];
-  for (let i = 1; i <= 10; i++) {
+  for (let i = 0; i <= 10; i++) {
     // 오늘날짜 부터 -0, -1, -2 를 차례로 한다.
     const date = new Date(tenDaysAgo);
     date.setDate(date.getDate() + i);
@@ -45,7 +48,7 @@ const sevenDaysSalesHistory = async () => {
       (saleDay) => date === saleDay._id
     );
     return {
-      day: dateFormat(date, "ddd"),
+      day: dateFormat(date, "mm-dd"),
       sale: matchedSales ? matchedSales.totalAmount : 0,
     };
   });
@@ -60,5 +63,23 @@ const sevenDaysSalesHistory = async () => {
 
 export default async function Sales() {
   const { sales, totalSales } = await sevenDaysSalesHistory();
-  return <div> Sales</div>;
+  return (
+    <div>
+      <GridView>
+        <div className=" bg-blue-500 p-4 rounded space-y-4">
+          <h1 className="font-semibold text-lg text-white">
+            {formatPrice(totalSales)}
+          </h1>
+          <div className="text-white text-sm">
+            <p>지난 10일간</p>
+            <p>총매출액</p>
+          </div>
+        </div>
+      </GridView>
+      <div className="mt-10">
+        <h1 className=" text-xl font-semibold pb-1">지난 10일간의 매출상황</h1>
+        <SalesChart data={sales} />
+      </div>
+    </div>
+  );
 }
