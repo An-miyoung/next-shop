@@ -80,8 +80,8 @@ export default async function Review({ params }: Props) {
     <div className="p-4 space-y-4">
       <div className="flex items-center space-x-4">
         <Image
-          src={review?.product.thumbnail || productInfo.thumbnail}
-          alt={review?.product.title || productInfo.title}
+          src={productInfo.thumbnail}
+          alt={productInfo.title}
           width={50}
           height={50}
           style={{ width: "auto", height: "auto" }}

@@ -36,6 +36,7 @@ interface Props {
       discounted: number;
     };
     rating?: number;
+    outOfStock: boolean;
   };
 }
 
@@ -131,24 +132,35 @@ export default function ProductCard({ product }: Props) {
         </CardBody>
       </Link>
       <CardFooter className="pt-0 space-y-4">
-        <Button
-          onClick={() => startTransition(async () => await addToCart())}
-          ripple={false}
-          fullWidth={true}
-          className="bg-blue-gray-900/10 text-blue-gray-900 shadow-none hover:shadow-none hover:scale-105 focus:shadow-none focus:scale-105 active:scale-100"
-          disabled={isPending}
-        >
-          장바구니에 넣기
-        </Button>
-        <Button
-          onClick={() => startTransition(async () => await handleCheckout())}
-          ripple={false}
-          fullWidth={true}
-          className="bg-blue-400 text-white shadow-none hover:shadow-none hover:scale-105 focus:shadow-none focus:scale-105 active:scale-100"
-          disabled={isPending}
-        >
-          바로 구매하기
-        </Button>
+        {product.outOfStock ? (
+          <div className=" text-red-500 text-lg lg:text-base pt-6">
+            <p>품절입니다.</p>
+            <p>빠르게 상품을 준비하겠습니다.</p>
+          </div>
+        ) : (
+          <>
+            <Button
+              onClick={() => startTransition(async () => await addToCart())}
+              ripple={false}
+              fullWidth={true}
+              className="bg-blue-gray-900/10 text-blue-gray-900 shadow-none hover:shadow-none hover:scale-105 focus:shadow-none focus:scale-105 active:scale-100"
+              disabled={isPending}
+            >
+              장바구니에 넣기
+            </Button>
+            <Button
+              onClick={() =>
+                startTransition(async () => await handleCheckout())
+              }
+              ripple={false}
+              fullWidth={true}
+              className="bg-blue-400 text-white shadow-none hover:shadow-none hover:scale-105 focus:shadow-none focus:scale-105 active:scale-100"
+              disabled={isPending}
+            >
+              바로 구매하기
+            </Button>
+          </>
+        )}
       </CardFooter>
     </Card>
   );

@@ -16,7 +16,8 @@ interface FetchedProduct {
   thumbnail: string;
   price: { base: number; discounted: number };
   sale: number;
-  rating?: number;
+  rating: number;
+  outOfStock: boolean;
 }
 
 const fetchFeaturedProduct = async () => {
@@ -52,6 +53,7 @@ const fetchLatestProducts = async () => {
       price: product.price,
       sale: product.sale,
       rating: product.rating,
+      outOfStock: product.quantity <= 0,
     }));
 
     return JSON.stringify(finalProducts);
