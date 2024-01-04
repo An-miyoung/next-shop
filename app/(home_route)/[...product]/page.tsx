@@ -36,17 +36,31 @@ const fetchOneProduct = async (productId: string) => {
   return JSON.stringify(finalProducts);
 };
 
+const fetchSimilarProduct = async () => {
+  await startDb();
+  const products = await ProductModel.find().sort({ rating: -1 }).limit(10);
+
+  return products.map((product) => ({
+    id: product._id.toString(),
+    title: product.title,
+    thumbnail: product.thumbnail.url,
+    price: product.price.discounted,
+  }));
+};
+
 const fetchProductReviews = async (productId: string) => {
   await startDb();
   const productReviews = await ReviewModel.find({
     product: productId,
-  }).populate<{
-    userId: { _id: ObjectId; name: string; avatar?: { url: string } };
-  }>({
-    path: "userId",
-    select: "_id name avatar.url",
-    model: UserModel,
-  });
+  })
+    .populate<{
+      userId: { _id: ObjectId; name: string; avatar?: { url: string } };
+    }>({
+      path: "userId",
+      select: "_id name avatar.url",
+      model: UserModel,
+    })
+    .sort("-createdAt");
 
   const finalReviews = productReviews.map((review) => ({
     id: review._id.toString(),
@@ -73,6 +87,8 @@ export default async function ProductPage({ params }: Props) {
     productImages = productImages.concat(productInfo.images);
   }
 
+  const similarProducts = await fetchSimilarProduct();
+
   const reviews = JSON.parse(await fetchProductReviews(productId));
 
   return (
@@ -87,6 +103,7 @@ export default async function ProductPage({ params }: Props) {
         rating={productInfo.rating}
         outOfStock={productInfo.outOfStock}
       />
+      <div>{JSON.stringify(similarProducts)}</div>
       <div className="py-4 space-y-1">
         <div className="flex justify-between items-center ">
           <h1 className="text-lg text-blue-gray-600 font-semibold mb-2">

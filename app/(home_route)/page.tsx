@@ -5,8 +5,8 @@ import GridView from "@components/GridView";
 import ProductCard from "@components/ProductCard";
 import FeaturedProductsSlider from "@components/FeaturedProductSlider";
 import FeaturedProductModel from "@models/featuredProductModel";
-import HorizontalMenu from "@components/HorizontalMenu";
 import StickySearch from "@components/StickySearchBar";
+import CategoryMenu from "@components/CategoryMenu";
 
 interface FetchedProduct {
   id: string;
@@ -71,7 +71,7 @@ export default async function Home() {
     <>
       <StickySearch />
       <div className="py-4 space-y-4">
-        <HorizontalMenu />
+        <CategoryMenu />
         <FeaturedProductsSlider products={featuredProducts} />
         <GridView>
           {products.map((product) => (

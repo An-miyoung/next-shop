@@ -1,11 +1,15 @@
 "use client";
-import { Chip } from "@material-tailwind/react";
+
 import { ChevronRightIcon, ChevronLeftIcon } from "@heroicons/react/24/outline";
 import React, { useContext } from "react";
 import { ScrollMenu, VisibilityContext } from "react-horizontal-scrolling-menu";
-import categories from "@utils/categories";
-import Link from "next/link";
 import "react-horizontal-scrolling-menu/dist/styles.css";
+
+interface Props {
+  title: string;
+  // children : ReactNode 로 줄경우 error
+  children: JSX.Element | JSX.Element[];
+}
 
 function LeftArrow() {
   const { isFirstItemVisible, scrollPrev } = useContext(VisibilityContext);
@@ -37,16 +41,12 @@ function RightArrow() {
   );
 }
 
-export default function HorizontalMenu() {
+export default function HorizontalMenu({ title, children }: Props) {
   return (
     <div className="hidden md:block">
-      <p className=" text-xs text-blue-gray-500 pl-10">카테고리로 찾기 : </p>
+      <p className=" text-xs text-blue-gray-500 pl-10">{`${title} : `}</p>
       <ScrollMenu LeftArrow={LeftArrow} RightArrow={RightArrow}>
-        {categories.map((c) => (
-          <Link key={c} href={`/browse-products/${c}`} scroll={false}>
-            <Chip color="teal" className="mr-2" variant="outlined" value={c} />
-          </Link>
-        ))}
+        {children}
       </ScrollMenu>
     </div>
   );
