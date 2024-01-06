@@ -1,13 +1,12 @@
 "use client";
 
-import React, { useEffect, useState, useTransition } from "react";
+import React, { useState, useTransition } from "react";
 import { Button } from "@material-tailwind/react";
 import CartCountUpdater from "@components/CartCountUpdater";
 import { useParams, useRouter } from "next/navigation";
 import useAuth from "../hooks/useAuth";
 import { toast } from "react-toastify";
-import { HeartIcon } from "@heroicons/react/24/outline";
-import { HeartIcon as HeartIconSolid } from "@heroicons/react/24/solid";
+import { Wishlist } from "@ui/WishList";
 
 interface Props {
   wishList?: boolean;
@@ -90,11 +89,7 @@ export default function BuyingOptions({ wishList }: Props) {
           startTransition(async () => await updateWishlist());
         }}
       >
-        {wishList ? (
-          <HeartIconSolid className="w-6 h-6 text-red-500" />
-        ) : (
-          <HeartIcon className="w-6 h-6" />
-        )}
+        <Wishlist isActive={wishList} />
       </Button>
     </div>
   );

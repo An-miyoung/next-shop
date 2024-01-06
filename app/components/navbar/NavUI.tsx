@@ -7,13 +7,13 @@ import {
   IconButton,
   Spinner,
 } from "@material-tailwind/react";
-import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
+import { Bars3Icon, HeartIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import ProfileMenu from "@components/ProfileMenu";
 import { MobileNav } from "@components/MobileNav";
 import CartIcon from "@components/CartIcon";
 import { UserCircleIcon, ShoppingBagIcon } from "@heroicons/react/24/outline";
 import useAuth from "@hooks/useAuth";
-import SearchForm from "../SearchForm";
+import SearchForm from "@components/SearchForm";
 import { useSearchParams } from "next/navigation";
 
 interface Props {
@@ -25,12 +25,17 @@ export const menuItems = [
   {
     href: "/profile",
     icon: <UserCircleIcon className="h-4 w-4" />,
-    label: "나의정보",
+    label: "나의 정보",
   },
   {
     href: "/profile/orders",
     icon: <ShoppingBagIcon className="h-4 w-4" />,
-    label: "주문내역",
+    label: "주문 내역",
+  },
+  {
+    href: "/profile/wishlist",
+    icon: <HeartIcon className="h-4 w-4" />,
+    label: "찜한 내역",
   },
 ];
 

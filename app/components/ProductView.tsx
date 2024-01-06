@@ -65,7 +65,7 @@ export default function ProductView({
 
         <div className="flex py-4">
           {outOfStock ? (
-            <div className=" text-red-500 text-lg pt-4">
+            <div className="text-center text-red-500 text-lg pt-4">
               <p>품절입니다.</p>
               <p>빠르게 상품을 준비하겠습니다.</p>
             </div>
