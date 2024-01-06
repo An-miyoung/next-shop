@@ -13,6 +13,8 @@ import { MobileNav } from "@components/MobileNav";
 import CartIcon from "@components/CartIcon";
 import { UserCircleIcon, ShoppingBagIcon } from "@heroicons/react/24/outline";
 import useAuth from "@hooks/useAuth";
+import SearchForm from "../SearchForm";
+import { useSearchParams } from "next/navigation";
 
 interface Props {
   cartItemsCount: number;
@@ -35,6 +37,8 @@ export const menuItems = [
 export default function NavUI({ cartItemsCount, avatar }: Props) {
   const [open, setOpen] = React.useState(false);
   const { loading, loggedIn } = useAuth();
+  const searchParams = useSearchParams();
+  const query = searchParams.get("query");
 
   React.useEffect(() => {
     const onResize = () => window.innerWidth >= 960 && setOpen(false);
@@ -48,12 +52,13 @@ export default function NavUI({ cartItemsCount, avatar }: Props) {
         <div className="flex items-center justify-between text-blue-gray-900">
           <Link
             href="/"
-            className="mr-4 cursor-pointer py-1.5 lg:ml-2 font-semibold"
+            className="mr-4 cursor-pointer py-1.5 md:ml-2 font-semibold"
           >
             Next Shop
           </Link>
           {/* 큰 화면일 때  */}
-          <div className="hidden lg:flex gap-2 items-center">
+          <div className="hidden md:flex gap-2 items-center">
+            <SearchForm submitTo="/search-products?query=" />
             <CartIcon cartItems={cartItemsCount} />
             {loggedIn ? (
               <ProfileMenu menuItems={menuItems} avatar={avatar} />
@@ -77,12 +82,12 @@ export default function NavUI({ cartItemsCount, avatar }: Props) {
             )}
           </div>
           {/* 작은 화면일 때는 드로워가 열렸으면 X, 닫혔으면 샌드위치  */}
-          <div className="lg:hidden flex items-center space-x-2">
+          <div className="md:hidden flex items-center space-x-2">
             <CartIcon cartItems={cartItemsCount} />
             <IconButton
               variant="text"
               color="blue-gray"
-              className="lg:hidden"
+              className="md:hidden"
               onClick={() => setOpen(!open)}
             >
               {open ? (
@@ -95,7 +100,7 @@ export default function NavUI({ cartItemsCount, avatar }: Props) {
         </div>
       </MaterialNav>
       {/* 모바일화면 */}
-      <div className="lg:hidden">
+      <div className="md:hidden">
         <MobileNav
           menuItems={menuItems}
           onClose={() => setOpen(false)}

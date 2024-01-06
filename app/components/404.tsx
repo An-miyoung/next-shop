@@ -26,6 +26,20 @@ export const PageNotFound = () => {
   );
 };
 
+export const SearchProductNotFound = () => {
+  return (
+    <div className="w-full flex flex-col items-center justify-center p-3 md:p-10">
+      <h4 className=" text-xl mb-6  text-blue-gray-600">죄송합니다...</h4>
+      <h2 className=" font-medium text-base mb-5  text-blue-gray-500">
+        검색조건에 해당하는 상품이 존재하지 않습니다.
+      </h2>
+      <Link href="/" className="font-semibold  text-green-900 underline">
+        Home 으로 이동
+      </Link>
+    </div>
+  );
+};
+
 export const PasswordResetFailed = () => {
   return (
     <div className="w-full flex flex-col items-center justify-center p-3 md:p-10">

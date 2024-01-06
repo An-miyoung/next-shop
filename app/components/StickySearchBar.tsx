@@ -12,6 +12,8 @@ import {
 import { Square3Stack3DIcon, ChevronDownIcon } from "@heroicons/react/24/solid";
 import Link from "next/link";
 import categories from "@utils/categories";
+import SearchForm from "./SearchForm";
+import { useSearchParams } from "next/navigation";
 
 // 굳이 밖으로 빼서 만든 이유는 renderItems 형식이 [{},{}] 이기 때문
 const navListItems = categories.map((category) => {
@@ -69,10 +71,13 @@ function NavList() {
 }
 
 export default function StickySearch() {
+  const searchParams = useSearchParams();
+  const query = searchParams.get("query");
+
   return (
     <Navbar className="sticky top-0 z-10 mx-auto md:hidden">
       <div className="flex-row items-center justify-start text-blue-gray-900">
-        <p>검색...</p>
+        <SearchForm submitTo="/search-products?query=" />
         <NavList />
       </div>
     </Navbar>
