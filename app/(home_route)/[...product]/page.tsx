@@ -12,6 +12,7 @@ import SimilarProductsList from "@components/SimilarProductsList";
 import { updateOrCreateHistory } from "@models/historyModel";
 import { getServerSession } from "next-auth";
 import { authConfig } from "@/auth";
+import WishlistModel from "@/app/models/wishListModel";
 
 interface Props {
   params: { product: string[] };
@@ -25,8 +26,17 @@ const fetchOneProduct = async (productId: string) => {
 
   const session = await getServerSession(authConfig);
   if (!session?.user) return redirect("/auth/signin");
+
+  const userId = session.user.id;
+  let isWishList = false;
   // 방문기록 남기기
-  await updateOrCreateHistory(session.user.id, product._id.toString());
+  await updateOrCreateHistory(userId, product._id.toString());
+  // 찜한 내역 가져오기
+  const wishList = await WishlistModel.findOne({
+    user: userId,
+    products: product._id.toString(),
+  });
+  isWishList = wishList ? true : false;
 
   const finalProducts = {
     id: product._id.toString(),
@@ -40,6 +50,7 @@ const fetchOneProduct = async (productId: string) => {
     sale: product.sale,
     rating: product.rating,
     outOfStock: product.quantity <= 0,
+    isWishList,
   };
 
   return JSON.stringify(finalProducts);
@@ -114,6 +125,7 @@ export default async function ProductPage({ params }: Props) {
         sale={productInfo.sale}
         rating={productInfo.rating}
         outOfStock={productInfo.outOfStock}
+        isWishList={productInfo.isWishList}
       />
       <div>
         <h1 className="text-lg text-blue-gray-600 font-semibold mb-2">
