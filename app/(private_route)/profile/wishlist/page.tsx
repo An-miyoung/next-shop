@@ -1,7 +1,9 @@
 import { PageNotFound } from "@/app/components/404";
+import EmptyPage from "@/app/components/EmptyPage";
 import WishlistProductCard from "@/app/components/WishlistProductCard";
 import startDb from "@/app/lib/db";
 import ProductModel from "@/app/models/productModel";
+import UserModel from "@/app/models/userModel";
 import WishlistModel from "@/app/models/wishListModel";
 import { authConfig } from "@/auth";
 import { ObjectId, isValidObjectId } from "mongoose";
@@ -14,8 +16,11 @@ const fetchWishlist = async () => {
   if (!session?.user) return redirect("/auth/signin");
 
   await startDb();
+  const user = await UserModel.findOne({ email: session.user.email });
+  if (!user) return redirect("/404");
+
   const wishlist = await WishlistModel.findOne({
-    user: session.user.id,
+    user: user.id,
   }).populate<{
     products: {
       _id: ObjectId;
@@ -42,14 +47,7 @@ const fetchWishlist = async () => {
 export default async function WishList() {
   const products = await fetchWishlist();
 
-  if (products.length === 0)
-    return (
-      <div className="pt-4 md:pt-8">
-        <p className=" text-center text-blue-gray-600 text-lg md:text-xl">
-          찜한 상품이 없습니다.
-        </p>
-      </div>
-    );
+  if (products.length === 0) return <EmptyPage title="찜한 상품" />;
 
   return (
     <div className="p-4 space-y-4">

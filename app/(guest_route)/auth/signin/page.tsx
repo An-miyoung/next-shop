@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useTransition } from "react";
 import AuthFormContainer from "@components/AuthFormContainer";
 import { Button, Input } from "@material-tailwind/react";
 import { useFormik } from "formik";
@@ -10,6 +10,7 @@ import Link from "next/link";
 import { signIn } from "next-auth/react";
 import { toast } from "react-toastify";
 import { useRouter } from "next/navigation";
+import Image from "next/image";
 
 const validationSchema = yup.object().shape({
   email: yup
@@ -21,6 +22,8 @@ const validationSchema = yup.object().shape({
 
 export default function SignIn() {
   const router = useRouter();
+  const [isPending, startTransition] = useTransition();
+
   const {
     values,
     handleChange,
@@ -69,54 +72,91 @@ export default function SignIn() {
     return errors[name] && touched[name] ? true : false;
   };
 
+  const naverSignin = async () => {
+    const result = await signIn("naver", { redirect: false });
+    if (result?.error) {
+      const toastMsg = () => (
+        <div>
+          네이버로그인에 실패했습니다.
+          <br />
+          다시 시도해 주세요.
+        </div>
+      );
+      toast.warning(toastMsg);
+    }
+  };
+
   return (
-    <AuthFormContainer title="로그인 합니다." onSubmit={handleSubmit}>
-      <Input
-        name="email"
-        label="이메일"
-        crossOrigin={undefined}
-        onChange={handleChange}
-        onBlur={handleBlur}
-        value={email}
-        autoComplete="email"
-        error={error("email")}
-      />
-      {errors.email !== undefined && touched.email && (
-        <ErrorsRender errorMessage={errors.email} />
-      )}
-      <Input
-        name="password"
-        label="비밀번호"
-        type="password"
-        crossOrigin={undefined}
-        onChange={handleChange}
-        onBlur={handleBlur}
-        value={password}
-        autoComplete="off"
-        error={error("password")}
-      />
-      {errors.password !== undefined && touched.password && (
-        <ErrorsRender errorMessage={errors.password} />
-      )}
-      <Button
-        type="submit"
-        className="w-full"
-        color="blue"
-        disabled={isSubmitting}
-      >
-        로그인
-      </Button>
-      <div className="flex items-center justify-between">
-        <Link href="/auth/signup" className="text-sm text-blue-gray-800">
-          회원가입
-        </Link>
-        <Link
-          href="/auth/forget-password"
-          className="text-sm text-blue-gray-800"
+    <div className="flex-col">
+      <AuthFormContainer title="로그인 합니다." onSubmit={handleSubmit}>
+        <Input
+          name="email"
+          label="이메일"
+          crossOrigin={undefined}
+          onChange={handleChange}
+          onBlur={handleBlur}
+          value={email}
+          autoComplete="email"
+          error={error("email")}
+        />
+        {errors.email !== undefined && touched.email && (
+          <ErrorsRender errorMessage={errors.email} />
+        )}
+        <Input
+          name="password"
+          label="비밀번호"
+          type="password"
+          crossOrigin={undefined}
+          onChange={handleChange}
+          onBlur={handleBlur}
+          value={password}
+          autoComplete="off"
+          error={error("password")}
+        />
+        {errors.password !== undefined && touched.password && (
+          <ErrorsRender errorMessage={errors.password} />
+        )}
+        <Button
+          type="submit"
+          className="w-full"
+          color="blue"
+          disabled={isSubmitting}
         >
-          비밀번호 있으셨나요?
-        </Link>
+          로그인
+        </Button>
+        <div className="flex items-center justify-between">
+          <Link href="/auth/signup" className="text-sm text-blue-gray-800">
+            회원가입
+          </Link>
+          <Link
+            href="/auth/forget-password"
+            className="text-sm text-blue-gray-800"
+          >
+            비밀번호 있으셨나요?
+          </Link>
+        </div>
+      </AuthFormContainer>
+
+      <div className="px-6 py-4 flex justify-between items-center space-x-4">
+        <button
+          onClick={() =>
+            startTransition(async () => {
+              naverSignin();
+            })
+          }
+          disabled={isPending}
+        >
+          <Image
+            src="/naver-login.png"
+            alt="naver login btn"
+            width={180}
+            height={20}
+          />
+        </button>
+        <div className="w-[150px] h-[50px] bg-yellow-600 ">
+          <h1>카카오 로그인</h1>
+        </div>
       </div>
-    </AuthFormContainer>
+    </div>
   );
 }

@@ -14,7 +14,6 @@ import CartIcon from "@components/CartIcon";
 import { UserCircleIcon, ShoppingBagIcon } from "@heroicons/react/24/outline";
 import useAuth from "@hooks/useAuth";
 import SearchForm from "@components/SearchForm";
-import { useSearchParams } from "next/navigation";
 
 interface Props {
   cartItemsCount: number;
@@ -42,8 +41,6 @@ export const menuItems = [
 export default function NavUI({ cartItemsCount, avatar }: Props) {
   const [open, setOpen] = React.useState(false);
   const { loading, loggedIn } = useAuth();
-  const searchParams = useSearchParams();
-  const query = searchParams.get("query");
 
   React.useEffect(() => {
     const onResize = () => window.innerWidth >= 960 && setOpen(false);

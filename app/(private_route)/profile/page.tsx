@@ -9,6 +9,7 @@ import UserModel from "@models/userModel";
 import OrderModel from "@models/orderModel";
 import OrderListPublic, { Orders } from "@components/OrderListPublic";
 import { PageNotFound } from "@components/404";
+import { isValidObjectId } from "mongoose";
 
 export const fetchUserProfile = async () => {
   const session = await getServerSession(authConfig);
@@ -16,25 +17,55 @@ export const fetchUserProfile = async () => {
   if (!session.user) return null;
 
   await startDb();
-  const user = await UserModel.findById(session.user.id);
-  if (!user) return null;
 
-  return {
-    id: user._id.toString(),
-    name: user.name,
-    email: user.email,
-    avatar: user.avatar?.url,
-    verified: user.verified,
-  };
+  if (!isValidObjectId(session.user.id)) {
+    const values = {
+      name: session.user.name || "네이버회원",
+      email: session.user.email,
+      avatar: { id: undefined, url: session.user.image },
+      verified: true,
+      role: "user",
+      password: "0000000",
+      socialId: session.user.id,
+    };
+
+    const user = await UserModel.findOneAndUpdate(
+      { email: session.user.email },
+      {
+        ...values,
+      },
+      { upsert: true }
+    );
+
+    if (!user) return null;
+    return {
+      id: user?._id.toString(),
+      name: user?.name,
+      email: user?.email,
+      avatar: user?.avatar?.url,
+      verified: user?.verified,
+      socialId: user?.socialId,
+    };
+  } else {
+    const user = await UserModel.findById(session.user.id);
+    if (!user) return null;
+    return {
+      id: user?._id.toString(),
+      name: user?.name,
+      email: user?.email,
+      avatar: user?.avatar?.url,
+      verified: user?.verified,
+    };
+  }
 };
 
 const fetchLatestOrders = async () => {
   const session = await getServerSession(authConfig);
   if (!session?.user) return null;
 
-  const userId = session.user.id;
+  const email = session.user.email;
   await startDb();
-  const orders = await OrderModel.find({ userId }).sort("-createdAt").limit(1);
+  const orders = await OrderModel.find({ email }).sort("-createdAt").limit(1);
   if (!orders) return null;
 
   // object 가 1개인 [] 가 return 됨으로 map 을 돌아야 한다.

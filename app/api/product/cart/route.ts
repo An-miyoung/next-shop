@@ -7,12 +7,12 @@ import { NextResponse } from "next/server";
 import startDb from "@lib/db";
 import { NewCartRequest } from "@app/types";
 import { isValidObjectId } from "mongoose";
+import UserModel from "@/app/models/userModel";
 
 export const POST = async (req: Request) => {
   try {
     const session = await getServerSession(authConfig);
-    const user = session?.user;
-    if (!user)
+    if (!session?.user)
       return NextResponse.json(
         {
           error: "로그인해야 접근할 수 있습니다.",
@@ -30,6 +30,9 @@ export const POST = async (req: Request) => {
       );
 
     await startDb();
+    const user = await UserModel.findOne({ email: session.user.email });
+    if (!user) return null;
+
     const cart = await CartModel.findOne({ userId: user.id });
     // 장바구니를 새로 만들때
     if (!cart) {

@@ -21,6 +21,8 @@ export interface SessionUserProfile {
   avatar?: string;
   role: "user" | "admin";
   verified: boolean;
+  image?: string;
+  socialId?: string;
 }
 
 export interface EmailVerifyRequest {

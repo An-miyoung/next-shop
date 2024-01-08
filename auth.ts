@@ -1,5 +1,6 @@
 import NextAuth, { NextAuthOptions } from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
+import NaverProvider from "next-auth/providers/naver";
 import { SessionUserProfile, SigninCredentials } from "@app/types";
 
 // getServerSession 으로 받는 session.user 에 우리가 원하는 필드를 넣도록
@@ -30,6 +31,10 @@ export const authConfig: NextAuthOptions = {
 
         if (error) return null;
       },
+    }),
+    NaverProvider({
+      clientId: process.env.NAVER_CLIENT_ID || "",
+      clientSecret: process.env.NAVER_CLIENT_SECRET || "",
     }),
   ],
   // callback 을 정하면 return 하는 내용을 정할 수 있다.

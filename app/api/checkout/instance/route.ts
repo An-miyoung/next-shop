@@ -1,5 +1,6 @@
-import startDb from "@/app/lib/db";
-import ProductModel from "@/app/models/productModel";
+import startDb from "@lib/db";
+import ProductModel from "@models/productModel";
+import UserModel from "@models/userModel";
 import { authConfig } from "@/auth";
 import { isValidObjectId } from "mongoose";
 import { getServerSession } from "next-auth";
@@ -40,6 +41,8 @@ export const POST = async (req: Request) => {
         },
         { status: 401 }
       );
+    const user = await UserModel.findOne({ email: session.user.email });
+    if (!user) return null;
 
     // stripe payment link 에 필요한 정보를 만들어 낸다. create-> params필요-> line_items 필요
     const line_items = [
@@ -59,7 +62,7 @@ export const POST = async (req: Request) => {
 
     const customer = await stripe.customers.create({
       metadata: {
-        userId: session.user.id,
+        userId: user.id,
         type: "instance-checkout",
         product: JSON.stringify({
           id: productId,

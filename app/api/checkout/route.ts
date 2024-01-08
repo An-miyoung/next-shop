@@ -4,6 +4,8 @@ import { isValidObjectId } from "mongoose";
 import { getServerSession } from "next-auth";
 import { NextResponse } from "next/server";
 import Stripe from "stripe";
+import startDb from "@/app/lib/db";
+import UserModel from "@/app/models/userModel";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
   apiVersion: "2023-10-16",
@@ -31,7 +33,11 @@ export const POST = async (req: Request) => {
       );
 
     // cartModel을 aggregation 하는 함수를 호출.
-    const cartItems = await getCartItems(session.user.id, cartId);
+    await startDb();
+    const user = await UserModel.findOne({ email: session.user.email });
+    if (!user) return null;
+
+    const cartItems = await getCartItems(user.id, cartId);
     if (!cartItems)
       return NextResponse.json(
         {
@@ -58,7 +64,7 @@ export const POST = async (req: Request) => {
 
     const customer = await stripe.customers.create({
       metadata: {
-        userId: session.user.id,
+        userId: user.id,
         cartId: cartId,
         type: "checkout",
       },

@@ -4,34 +4,24 @@ import { getServerSession } from "next-auth";
 import { authConfig } from "@/auth";
 import CartModel from "@models/cartModel";
 import { Types } from "mongoose";
-import { SessionUserProfile } from "@app/types";
 import startDb from "@lib/db";
 import UserModel from "@models/userModel";
+import { fetchUserProfile } from "@/app/(private_route)/profile/page";
 
-const fetchUserProfile = async () => {
-  const session = await getServerSession(authConfig);
-  if (!session) return null;
-
+const makeNaverUser = async (values: object) => {
   await startDb();
-  const user = await UserModel.findById(session.user.id);
-
-  return {
-    id: user?._id.toString(),
-    name: user?.name,
-    email: user?.email,
-    avatar: user?.avatar?.url,
-    verified: user?.verified,
-  };
 };
 
 const getCartItemsCount = async () => {
   try {
     const session = await getServerSession(authConfig);
-    if (!session) return 0;
-
-    const user: SessionUserProfile = session.user;
+    if (!session?.user) return 0;
 
     await startDb();
+
+    const user = await UserModel.findOne({ email: session.user.email });
+    if (!user) return 0;
+
     // user.id 는 string 이고 db 에 접근하려면 objectId 여야해서 조작한다.
     const cart = await CartModel.aggregate([
       // user 에 맞는 장바구니를 찾고
@@ -57,6 +47,8 @@ const getCartItemsCount = async () => {
 };
 
 export default async function Navbar() {
+  const session = await getServerSession(authConfig);
+
   const count = await getCartItemsCount();
   const profile = await fetchUserProfile();
 

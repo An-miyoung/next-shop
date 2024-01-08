@@ -1,4 +1,3 @@
-import CartEmptyPage from "@components/CartEmptyPage";
 import CartItems from "@components/CartItems";
 import startDb from "@lib/db";
 import CartModel from "@models/cartModel";
@@ -6,13 +5,18 @@ import { authConfig } from "@/auth";
 import { Types } from "mongoose";
 import { getServerSession } from "next-auth";
 import React from "react";
+import UserModel from "@/app/models/userModel";
+import EmptyPage from "@/app/components/EmptyPage";
 
 const fetchCartProducts = async () => {
   const session = await getServerSession(authConfig);
   if (!session?.user) return null;
 
   await startDb();
-  const userId = session.user.id;
+  const user = await UserModel.findOne({ email: session.user.email });
+  if (!user) return null;
+
+  const userId = user.id;
   // aggregate 한 결과값이 array 형태로 나오기 때문에 분해해서 실제 필요한 내용만 render 하기 위해
   const [cartItems] = await CartModel.aggregate([
     {
@@ -81,7 +85,7 @@ export default async function Cart() {
   const fetchedData = await fetchCartProducts();
   const cart = fetchedData && JSON.parse(fetchedData);
 
-  if (!cart) return <CartEmptyPage />;
+  if (!cart) return <EmptyPage title="장바구니" />;
 
   const { id, products, totalQty, totalPrice } = cart;
 

@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import Notification from "@components/Notification";
-import AuthSession from "./components/AuthSession";
+import AuthSession from "@components/AuthSession";
 
 const inter = Inter({ subsets: ["latin"] });
 
